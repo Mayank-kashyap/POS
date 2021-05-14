@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<inventory_items>
+    <inventory_item>
+        <brand>unclechips</brand>
+        <category>chips</category>
+        <quantity>2546</quantity>
+    </inventory_item>
+    <inventory_item>
+        <brand>b</brand>
+        <category>bc</category>
+        <quantity>1727</quantity>
+    </inventory_item>
+</inventory_items>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<items>
+    <order_id>102</order_id>
+    <datetime>2021-05-10 17:39</datetime>
+    <total>266000.0</total>
+    <item>
+        <id>10006</id>
+        <name>latitude</name>
+        <mrp>66000.0</mrp>
+        <quantity>4</quantity>
+    </item>
+    <item>
+        <id>10007</id>
+        <name>nestle chocolate 23</name>
+        <mrp>100.0</mrp>
+        <quantity>20</quantity>
+    </item>
+</items>
