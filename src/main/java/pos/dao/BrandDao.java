@@ -15,26 +15,25 @@ import java.util.List;
 public class BrandDao extends AbstractDao{
 
     @PersistenceContext
-    private EntityManager em;
+    private EntityManager entityManager;
 
     //Insert into table
     @Transactional
     public void insert(BrandPojo brandPojo){
-        em.persist(brandPojo);
+        entityManager.persist(brandPojo);
     }
 
     //Retrieve a brand pojo
     @Transactional
     public BrandPojo select(int id){
-        return em.find(BrandPojo.class,id);
+        return entityManager.find(BrandPojo.class,id);
     }
 
     //Retrieve all brand pojo
     @Transactional
     public List<BrandPojo> selectAll() {
-        //Queries needed for brand
-        String select_all = "select p from BrandPojo p";
-        TypedQuery<BrandPojo> query = getQuery(select_all,  BrandPojo.class);
+        String selectAll = "select p from BrandPojo p";
+        TypedQuery<BrandPojo> query = getQuery(selectAll,  BrandPojo.class);
         if(query == null){
             return new ArrayList<>();
         }
@@ -44,17 +43,17 @@ public class BrandDao extends AbstractDao{
     //Update a brand with given brandId
     @Transactional
     public void update(int id,BrandPojo brandPojo) {
-        BrandPojo brandPojo1=em.find(BrandPojo.class, id);
+        BrandPojo brandPojo1= entityManager.find(BrandPojo.class, id);
         brandPojo1.setBrand(brandPojo.getBrand());
         brandPojo1.setCategory(brandPojo.getCategory());
-        em.merge(brandPojo1);
+        entityManager.merge(brandPojo1);
     }
 
     @Transactional
     //Retrieve brand pojo based in brand and category
     public List<BrandPojo> getIdFromBrandCategory(String brand, String category){
-        String select_brand_category_id = "select p from BrandPojo p where brand=:brand and category=:category";
-        TypedQuery<BrandPojo> query = getQuery(select_brand_category_id, BrandPojo.class);
+        String selectBrandCategory = "select p from BrandPojo p where brand=:brand and category=:category";
+        TypedQuery<BrandPojo> query = getQuery(selectBrandCategory, BrandPojo.class);
         query.setParameter("brand",brand);
         query.setParameter("category",category);
         List<BrandPojo> brandPojoList= query.getResultList();

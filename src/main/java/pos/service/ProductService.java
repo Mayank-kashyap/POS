@@ -5,9 +5,6 @@ import org.springframework.stereotype.Service;
 import pos.dao.BrandDao;
 import pos.dao.InventoryDao;
 import pos.dao.ProductDao;
-import pos.model.ProductData;
-import pos.model.ProductForm;
-import pos.pojo.BrandPojo;
 import pos.pojo.ProductPojo;
 import pos.util.StringUtil;
 
@@ -20,7 +17,7 @@ import java.util.Map;
 public class ProductService {
 
     @Autowired
-    private ProductDao dao;
+    private ProductDao productDao;
     @Autowired
     private BrandDao brandDao;
     @Autowired
@@ -32,7 +29,7 @@ public class ProductService {
     public void add(ProductPojo productPojo) throws ApiException{
         check(productPojo);
         normalize(productPojo);
-        dao.insert(productPojo);
+        productDao.insert(productPojo);
     }
 
     @Transactional(rollbackOn = ApiException.class)
@@ -41,21 +38,28 @@ public class ProductService {
     }
 
     @Transactional
+    public ProductPojo getFromBarcode(String barcode) throws ApiException {
+        return checkBarcode(barcode);
+    }
+    @Transactional
     public List<ProductPojo> getAll() {
-        return dao.selectAll();
+        return productDao.selectAll();
     }
 
     @Transactional(rollbackOn  = ApiException.class)
-    public void update(int id, ProductPojo p) throws ApiException {
-        check(p);
-        normalize(p);
-        ProductPojo ex = getCheck(id);
-        ex.setBarcode(p.getBarcode());
-        ex.setName(p.getName());
-        ex.setMrp(p.getMrp());
-        dao.update(id,ex);
+    public void update(int id, ProductPojo productPojo) throws ApiException {
+        check(productPojo);
+        normalize(productPojo);
+        ProductPojo productPojo1 = getCheck(id);
+        productPojo1.setBarcode(productPojo.getBarcode());
+        productPojo1.setName(productPojo.getName());
+        productPojo1.setMrp(productPojo.getMrp());
+        productPojo1.setBrandCategory(productPojo.getBrandCategory());
+        productDao.update(id, productPojo1);
     }
 
+
+    //HELPER METHODS
     @Transactional
     public void check(ProductPojo productPojo) throws ApiException {
         if(StringUtil.isEmpty(productPojo.getBarcode())) {
@@ -64,28 +68,39 @@ public class ProductService {
         if(StringUtil.isEmpty(productPojo.getName())) {
             throw new ApiException("Name cannot be empty");
         }
-        if(productPojo.getMrp()<0)
+        if(productPojo.getMrp()<=0)
             throw new ApiException("Mrp cannot be negative");
-
     }
+
+    @Transactional(rollbackOn = ApiException.class)
+    public ProductPojo checkBarcode(String barcode) throws ApiException {
+        if(barcode==null)
+            throw new ApiException("Barcode cannot be empty");
+        ProductPojo productPojo= productDao.getIdFromBarcode(barcode);
+        if(productPojo==null){
+            throw new ApiException("Product with given barcode does not exist");
+        }
+        return productPojo;
+    }
+
     @Transactional
     public ProductPojo getCheck(int id) throws ApiException {
-        ProductPojo p = dao.select(id);
-        if (p == null) {
+        ProductPojo productPojo = productDao.select(id);
+        if (productPojo == null) {
             throw new ApiException("Product with given ID does not exist, id: " + id);
         }
-        return p;
+        return productPojo;
     }
 
     //maps all the product pojos with their barcode
     @Transactional
     public Map<String, ProductPojo> getAllProductPojosByBarcode() {
-        List<ProductPojo> product_list = getAll();
-        Map<String, ProductPojo> barcode_product = new HashMap<String, ProductPojo>();
-        for (ProductPojo product : product_list) {
-            barcode_product.put(product.getBarcode(), product);
+        List<ProductPojo> productPojoList = getAll();
+        Map<String, ProductPojo> barcodeProduct = new HashMap<String, ProductPojo>();
+        for (ProductPojo productPojo : productPojoList) {
+            barcodeProduct.put(productPojo.getBarcode(), productPojo);
         }
-        return barcode_product;
+        return barcodeProduct;
     }
 
     @Transactional
@@ -94,28 +109,4 @@ public class ProductService {
         p.setBarcode(StringUtil.toLowerCase(p.getBarcode()));
     }
 
-    @Transactional
-    public ProductData convert(ProductPojo p) throws ApiException {
-        ProductData d = new ProductData();
-        d.setBarcode(p.getBarcode());
-        d.setBrand((brandDao.select(p.getBrandPojo().getId())).getBrand());
-        d.setCategory((brandDao.select(p.getBrandPojo().getId())).getCategory());
-        d.setName(p.getName());
-        d.setMrp(p.getMrp());
-        d.setId(p.getId());
-        return d;
-    }
-
-    @Transactional
-    public ProductPojo convert(ProductForm f) throws ApiException {
-        ProductPojo p = new ProductPojo();
-        p.setBarcode(f.getBarcode());
-        p.setName(f.getName());
-        p.setMrp(f.getMrp());
-        f.setBrand(f.getBrand().toLowerCase().trim());
-        f.setCategory(f.getCategory().toLowerCase().trim());
-        BrandPojo brandPojo= brandService.getBrandPojo(f.getBrand(),f.getCategory());
-        p.setBrandPojo(brandDao.getIdFromBrandCategory(f.getBrand(),f.getCategory()).get(0));
-        return p;
-    }
 }

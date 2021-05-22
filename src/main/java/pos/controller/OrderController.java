@@ -14,6 +14,7 @@ import pos.pojo.ProductPojo;
 import pos.service.ApiException;
 import pos.service.OrderService;
 import pos.service.ProductService;
+import pos.util.DataConversionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,28 +33,24 @@ public class OrderController extends ExceptionHandler{
 
     @Autowired
     private ProductDao productDao;
-
-    public OrderController() {
-    }
-
-
+    
     //Adds an order
     @ApiOperation(value = "Adds Order Details")
     @RequestMapping(path = "/api/order", method = RequestMethod.POST)
-    //todo remove response and apiException
     public OrderData add(@RequestBody OrderItemForm[] orderItemForms) throws ApiException{
-        Map<String, ProductPojo> barcode_product = productService.getAllProductPojosByBarcode();
-        List<OrderItemPojo> orderItemList = OrderService.convertOrderItemForms(barcode_product, orderItemForms);
+        Map<String, ProductPojo> allProductPojosByBarcode = productService.getAllProductPojosByBarcode();
+        List<OrderItemPojo> orderItemList = DataConversionUtil.convertOrderItemForms(allProductPojosByBarcode, orderItemForms);
         int orderId = orderService.add(orderItemList);
-        return orderService.convert(orderService.getOrder(orderId));
+        return DataConversionUtil.convert(orderService.getOrder(orderId));
     }
 
     //Adds an OrderItem to an existing order
     @ApiOperation(value = "Adds an OrderItem to an existing order")
     @RequestMapping(path = "/api/order_item/{orderId}", method = RequestMethod.POST)
     public void addOrderItem(@PathVariable int orderId, @RequestBody OrderItemForm orderItemForm) throws ApiException {
-        ProductPojo productPojo = productDao.getIdFromBarcode(orderItemForm.getBarcode());
-        OrderItemPojo orderItemPojo = OrderService.convert(productPojo, orderItemForm);
+        orderItemForm.setBarcode(orderItemForm.getBarcode().toLowerCase().trim());
+        ProductPojo productPojo = productService.getFromBarcode(orderItemForm.getBarcode());
+        OrderItemPojo orderItemPojo = DataConversionUtil.convert(productPojo, orderItemForm);
         orderService.addOrderItem(orderId, orderItemPojo);
     }
 
@@ -62,24 +59,19 @@ public class OrderController extends ExceptionHandler{
     @RequestMapping(path = "/api/order_item/{id}", method = RequestMethod.GET)
     public OrderItemData get(@PathVariable int id) throws ApiException {
         OrderItemPojo orderItemPojo = orderService.get(id);
-        return OrderService.convert(orderItemPojo);
-    }
-
-    //Deletes an Order by id
-    @ApiOperation(value = "Deletes an Order by id")
-    @RequestMapping(path = "/api/order/{id}", method = RequestMethod.DELETE)
-    public void deleteOrder(@PathVariable int id) throws ApiException {
-        orderService.delete(id);
+        ProductPojo productPojo= productService.get(orderItemPojo.getProductId());
+        return OrderService.convert(orderItemPojo,productPojo);
     }
 
     //Gets list of Order Items
     @ApiOperation(value = "Gets list of Order Items")
     @RequestMapping(path = "/api/order_item", method = RequestMethod.GET)
-    public List<OrderItemData> getAll() {
+    public List<OrderItemData> getAll() throws ApiException {
         List<OrderItemPojo> orderItemPojoList = orderService.getAll();
         List<OrderItemData> orderItemDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            orderItemDataList.add(OrderService.convert(orderItemPojo));
+            ProductPojo productPojo= productService.get(orderItemPojo.getProductId());
+            orderItemDataList.add(OrderService.convert(orderItemPojo,productPojo));
         }
         return orderItemDataList;
     }
@@ -91,7 +83,7 @@ public class OrderController extends ExceptionHandler{
         List<OrderPojo> orderPojoList = orderService.getAllOrders();
         List<OrderData> orderDataList = new ArrayList<>();
         for (OrderPojo orderPojo : orderPojoList) {
-            orderDataList.add(orderService.convert(orderPojo));
+            orderDataList.add(DataConversionUtil.convert(orderPojo));
         }
         return orderDataList;
     }
@@ -103,24 +95,19 @@ public class OrderController extends ExceptionHandler{
         List<OrderItemPojo> orderItemPojoList = orderService.getOrderItems(id);
         List<OrderItemData> orderItemDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            orderItemDataList.add(OrderService.convert(orderItemPojo));
+            ProductPojo productPojo= productService.get(orderItemPojo.getProductId());
+            orderItemDataList.add(OrderService.convert(orderItemPojo,productPojo));
         }
         return orderItemDataList;
-    }
-
-    //Deletes Order Item record
-    @ApiOperation(value = "Deletes Order Item record")
-    @RequestMapping(path = "/api/order_item/{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable int id) {
-        orderService.deleteOrderItem(id);
     }
 
     //Updates a OrderItem record
     @ApiOperation(value = "Updates a OrderItem record")
     @RequestMapping(path = "/api/order_item/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable int id, @RequestBody OrderItemForm orderItemForm) throws ApiException {
-        ProductPojo productPojo = productDao.getIdFromBarcode(orderItemForm.getBarcode());
-        OrderItemPojo orderItemPojo = OrderService.convert(productPojo, orderItemForm);
+        orderItemForm.setBarcode(orderItemForm.getBarcode().toLowerCase().trim());
+        ProductPojo productPojo = productService.getFromBarcode(orderItemForm.getBarcode());
+        OrderItemPojo orderItemPojo = DataConversionUtil.convert(productPojo, orderItemForm);
         orderService.update(id, orderItemPojo);
     }
 }

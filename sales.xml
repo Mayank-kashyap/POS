@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <sales_items>
     <sales_item>
-        <brand>dell</brand>
-        <category>pc</category>
-        <quantity>9</quantity>
-        <revenue>485000.0</revenue>
+        <brand>puma</brand>
+        <category>shoes</category>
+        <quantity>2</quantity>
+        <revenue>10000.0</revenue>
     </sales_item>
     <sales_item>
-        <brand>mi</brand>
-        <category>phone</category>
+        <brand>sleepwell</brand>
+        <category>bed</category>
         <quantity>4</quantity>
-        <revenue>120000.0</revenue>
-    </sales_item>
-    <sales_item>
-        <brand>nestle</brand>
-        <category>chocolate</category>
-        <quantity>20</quantity>
-        <revenue>80000.0</revenue>
+        <revenue>1200.0</revenue>
     </sales_item>
 </sales_items>

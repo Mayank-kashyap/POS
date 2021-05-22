@@ -27,6 +27,7 @@ function getInvoiceUrl(){
 function addOrderItemToList(event) {
 	var $form = $("#orderItem-form");
 	var json = toJson($form);
+	console.log(json);
 	var check = validateOrderItem(json);
 	if(check) {
 		var ind = checkIfAlreadyPresent(JSON.parse(json).barcode);
@@ -36,8 +37,8 @@ function addOrderItemToList(event) {
 				orderitemList.push(JSON.parse(json));
 			}
 			else{
-				//toastr.error("The product inventory is: " + inventoryMap[JSON.parse(json).barcode] + "Cannot order more than that");
-				alert("The product inventory is: " + inventoryMap[JSON.parse(json).barcode] + "Cannot order more than that");
+				toastr.error("The product inventory is: " + inventoryMap[JSON.parse(json).barcode] + "order cannot be placed more than that");
+
 			}
 		}
 		else{
@@ -47,12 +48,11 @@ function addOrderItemToList(event) {
 			}
 			else{
 				if(!inventoryMap[JSON.parse(json).barcode]){
-					//toastr.error("The product's inventory is: " + 0);
-					alert("The product's inventory is: " + 0);
+					toastr.error("The product's inventory is: " + 0);
+
 				}
-				//toastr.error("The product inventory is: " + inventoryMap[JSON.parse(json).barcode] + "Cannot order more than that");
-				alert("The product inventory is: " + inventoryMap[JSON.parse(json).barcode] + "Cannot order more than that");
-			}
+				toastr.error("The product inventory is: " + inventoryMap[JSON.parse(json).barcode] + "Cannot order more than that");
+				}
 		}
 	}
 	console.log(orderitemList);
@@ -68,7 +68,7 @@ function addOrderItem(event){
 	var $form = $("#orderItem-add-form");
 	var json = toJson($form);
 	var order_id = $("#orderItem-add-form input[name=order_id]").val();
-
+    console.log(order_id);
 	var url = getOrderItemUrl() + "/" + order_id;
 	var check = validateOrderItem(json);
 	console.log(check);
@@ -89,8 +89,7 @@ function addOrderItem(event){
 function addOrder(event) {
 
 	if(orderitemList.length == 0) {
-		//toastr.error("Add at least one order item");
-		alert("Add at least one order item");
+		toastr.error("Add at least one order item");
 		return;
 	}
 
@@ -191,7 +190,7 @@ function displayOrderItemListFrontend(data){
 	$tbody.empty();
 	for(var i in data){
 		var e = data[i];
-		var buttonHtml = '<button onclick="deleteOrderItem(' + i + ')">delete</button>'
+		var buttonHtml = '<button class="btn btn-primary" onclick="deleteOrderItem(' + i + ')">delete</button>'
 		var row = '<tr>'
 		+ '<td>' + (i) + '</td>'
 		+ '<td>' + e.barcode + '</td>'
@@ -274,6 +273,7 @@ function createOrderItemsHtml(data,id) {
 
 	var table = $('.orderitemrows' + id).find('tbody');
 	var thHtml = '<tr>';
+	thHtml += '<th scope="col">Id</th>';
 	thHtml += '<th scope="col">Barcode</th>';
 	thHtml += '<th scope="col">Quantity</th>';
 	thHtml += '<th scope="col">SP</th>';
@@ -282,9 +282,9 @@ function createOrderItemsHtml(data,id) {
 	table.append(thHtml);
 	for(var i in data){
 		var e = data[i];
-		var buttonHtml = '<button class="btn btn-primary" onclick="displayEditOrderItem(' + e.id + ')">Edit</button>'
-		buttonHtml+='  <button class="btn btn-primary" onclick="deleteOrderItemFromOrderList(' + e.id + ')">Delete</button>';
+		var buttonHtml = '<button class="btn btn-primary" onclick="displayEditOrderItem(' + e.id + ')">Edit</button>';
 		var row = '<tr>'
+		+ '<td>' + e.id + '</td>'
 		+ '<td>' + e.barcode + '</td>'
 		+ '<td>'  + e.quantity + '</td>'
 		+ '<td>' + e.sp + '</td>'
@@ -324,7 +324,7 @@ function validateOrderItem(json) {
     		return false;
     	}
 
-    	if(parseFloat(json.sp)<=0) {
+    if(parseFloat(json.sp)<=0) {
     		toastr.error("Selling price must be positive");
     		return false;
     	}
@@ -376,9 +376,8 @@ function ajaxQueryRecur(url, type, data, successFunction,recurFunction) {
 			  var error = "For " + data;
 				console.log(error_obj.message);
 				error_obj.message = error + " " + error_obj.message;
-				//toastr.error(error_obj.message);
-				alert(error_obj.message);
-	   		errorData.push(error_obj);
+				toastr.error(error_obj.message);
+				errorData.push(error_obj);
 				recurFunction();
 	   }
 	});
@@ -403,5 +402,5 @@ function init(){
 }
 
 $(document).ready(init);
-//$(document).ready(getOrderItemList);
+$(document).ready(getOrderItemList);
 $(document).ready(getOrderList);

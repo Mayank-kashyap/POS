@@ -9,6 +9,7 @@ import pos.model.BrandForm;
 import pos.pojo.BrandPojo;
 import pos.service.ApiException;
 import pos.service.BrandService;
+import pos.util.DataConversionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class BrandController extends ExceptionHandler{
     @ApiOperation(value = "Adds a brand")
     @RequestMapping(path = "/api/brand", method = RequestMethod.POST)
     public void add(@RequestBody BrandForm brandForm) throws ApiException {
-        BrandPojo brandPojo= BrandService.convert(brandForm);
+        BrandPojo brandPojo= DataConversionUtil.convert(brandForm);
         brandService.add(brandPojo);
     }
 
@@ -35,7 +36,7 @@ public class BrandController extends ExceptionHandler{
     @RequestMapping(path = "/api/brand/{id}", method = RequestMethod.GET)
     public BrandData get(@PathVariable int id) throws ApiException {
         BrandPojo brandPojo = brandService.get(id);
-        return BrandService.convert(brandPojo);
+        return DataConversionUtil.convert(brandPojo);
     }
 
     //Retrieve complete list of all brands
@@ -43,10 +44,7 @@ public class BrandController extends ExceptionHandler{
     @RequestMapping(path = "/api/brand", method = RequestMethod.GET)
     public List<BrandData> getAll(){
         List<BrandPojo> brandPojoList = brandService.getAll();
-        List<BrandData> brandDataList = new ArrayList<>();
-        for (BrandPojo brandPojo : brandPojoList){
-            brandDataList.add(BrandService.convert(brandPojo));
-        }
+        List<BrandData> brandDataList = DataConversionUtil.convert(brandPojoList);
         return brandDataList;
     }
 
@@ -54,7 +52,7 @@ public class BrandController extends ExceptionHandler{
     @ApiOperation(value = "Updates a brand")
     @RequestMapping(path = "/api/brand/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable int id, @RequestBody BrandForm brandForm) throws ApiException {
-        BrandPojo brandPojo = BrandService.convert(brandForm);
+        BrandPojo brandPojo = DataConversionUtil.convert(brandForm);
         brandService.update(id, brandPojo);
     }
 }

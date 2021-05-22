@@ -2,6 +2,7 @@ package pos.dao;
 
 import org.springframework.stereotype.Repository;
 import pos.pojo.InventoryPojo;
+import pos.pojo.ProductPojo;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,7 +31,6 @@ public class InventoryDao extends AbstractDao{
 
     //Retrieve list of inventory pojo
     public List<InventoryPojo> selectAll() {
-        //Query required for inventory
         String select_all = "select p from InventoryPojo p";
         TypedQuery<InventoryPojo> query = getQuery(select_all,  InventoryPojo.class);
         if(query == null){
@@ -42,8 +42,21 @@ public class InventoryDao extends AbstractDao{
     //Update an inventory
     public void update(int id,InventoryPojo inventoryPojo) {
         InventoryPojo inventoryPojo1=em.find(InventoryPojo.class, id);
-        inventoryPojo1.setProduct(inventoryPojo.getProduct());
+        inventoryPojo1.setProductId(inventoryPojo.getProductId());
         inventoryPojo1.setQuantity(inventoryPojo.getQuantity());
         em.merge(inventoryPojo1);
+    }
+
+    //get from product Id
+    public InventoryPojo getFromProductId(int productId){
+        String select="select p from InventoryPojo p where productId=:productId";
+        TypedQuery<InventoryPojo> query = getQuery(select, InventoryPojo.class);
+        query.setParameter("productId", productId);
+        List<InventoryPojo> res=query.getResultList();
+        if(res.size()>0){
+            return res.get(0);
+        }
+        else
+            return null;
     }
 }

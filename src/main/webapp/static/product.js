@@ -220,6 +220,8 @@ function displayUploadData(){
 }
 
 function displayProduct(data){
+    $("#product-edit-form input[name=brand]").val(data.brand);
+    $("#product-edit-form input[name=category]").val(data.category);
 	$("#product-edit-form input[name=barcode]").val(data.barcode);
 	$("#product-edit-form input[name=name]").val(data.name);
 	$("#product-edit-form input[name=mrp]").val(data.mrp);

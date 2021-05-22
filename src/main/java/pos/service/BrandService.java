@@ -3,13 +3,10 @@ package pos.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pos.dao.BrandDao;
-import pos.model.BrandData;
-import pos.model.BrandForm;
 import pos.pojo.BrandPojo;
 import pos.util.StringUtil;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,46 +14,52 @@ import java.util.List;
 public class BrandService {
 
     @Autowired
-    private BrandDao dao;
+    private BrandDao brandDao;
 
     //Add a brand
     @Transactional(rollbackOn = ApiException.class)
     public void add(BrandPojo brandPojo) throws ApiException{
         checkNull(brandPojo);
         normalize(brandPojo);
-        dao.insert(brandPojo);
+        brandDao.insert(brandPojo);
     }
 
+    //get a brand by id
     @Transactional(rollbackOn = ApiException.class)
     public BrandPojo get(int id) throws ApiException {
         return getCheck(id);
     }
 
+    //get list of all brands
     @Transactional
     public List<BrandPojo> getAll() {
-        return dao.selectAll();
+        return brandDao.selectAll();
     }
 
+    //update a brand
     @Transactional(rollbackOn  = ApiException.class)
-    public void update(int id, BrandPojo p) throws ApiException {
-        checkNull(p);
-        normalize(p);
-        BrandPojo ex = getCheck(id);
-        ex.setBrand(p.getBrand());
-        ex.setCategory(p.getCategory());
-        dao.update(id,ex);
+    public void update(int id, BrandPojo brandPojo) throws ApiException {
+        checkNull(brandPojo);
+        normalize(brandPojo);
+        BrandPojo brandPojo1 = getCheck(id);
+        brandPojo1.setBrand(brandPojo.getBrand());
+        brandPojo1.setCategory(brandPojo.getCategory());
+        brandDao.update(id,brandPojo1);
     }
 
 
+    //HELPER METHODS
+    //check whether brand with given id exists or not
     @Transactional
     public BrandPojo getCheck(int id) throws ApiException {
-        BrandPojo p = dao.select(id);
-        if (p == null) {
+        BrandPojo brandPojo = brandDao.select(id);
+        if (brandPojo == null) {
             throw new ApiException("Brand with given ID does not exit, id: " + id);
         }
-        return p;
+        return brandPojo;
     }
 
+    //checks whether the entered values are null or not
     public void checkNull(BrandPojo brandPojo) throws ApiException {
         if(StringUtil.isEmpty(brandPojo.getBrand())) {
             throw new ApiException("Brand name cannot be empty");
@@ -64,53 +67,27 @@ public class BrandService {
         if(StringUtil.isEmpty(brandPojo.getCategory())) {
             throw new ApiException("Category name cannot be empty");
         }
-        List<BrandPojo> brand_category_list= dao.getIdFromBrandCategory(brandPojo.getBrand(),brandPojo.getCategory());
-        if(!brand_category_list.isEmpty()) {
+        List<BrandPojo> brandPojoList = brandDao.getIdFromBrandCategory(brandPojo.getBrand(),brandPojo.getCategory());
+        if(!brandPojoList.isEmpty()) {
             throw new ApiException("Brand and Category already exist");
         }
     }
 
+    //gets a brand by brand and category
     @Transactional()
     public BrandPojo getBrandPojo(String brand, String category) throws ApiException {
 
-        List<BrandPojo> brand_list = dao.getIdFromBrandCategory(brand, category);
-
+        List<BrandPojo> brand_list = brandDao.getIdFromBrandCategory(brand, category);
         if (brand_list.isEmpty()) {
             throw new ApiException("The brand name and category given does not exist " + brand + " " + category);
         }
         return brand_list.get(0);
     }
 
-    protected static void normalize(BrandPojo p) {
-        p.setBrand(StringUtil.toLowerCase(p.getBrand()));
-        p.setCategory(StringUtil.toLowerCase(p.getCategory()));
+    //normalizes a pojo into lower case and trimmed
+    protected static void normalize(BrandPojo brandPojo) {
+        brandPojo.setBrand(StringUtil.toLowerCase(brandPojo.getBrand()));
+        brandPojo.setCategory(StringUtil.toLowerCase(brandPojo.getCategory()));
     }
 
-    //HELPER FUNCTIONS
-    //Converts a brand pojo into brand data
-    public static BrandData convert(BrandPojo p) {
-        BrandData d = new BrandData();
-        d.setBrand(p.getBrand());
-        d.setCategory(p.getCategory());
-        d.setId(p.getId());
-        return d;
-    }
-
-    //converts list of brand pojo to list of brand data
-    public static List<BrandData> convert(List<BrandPojo> list) {
-        List<BrandData> list2 = new ArrayList<BrandData>();
-        for (BrandPojo p : list) {
-            list2.add(convert(p));
-        }
-        return list2;
-    }
-
-    //converts a brand form into brand pojo
-    @Transactional
-    public static BrandPojo convert(BrandForm f) {
-        BrandPojo p = new BrandPojo();
-        p.setBrand(f.getBrand());
-        p.setCategory(f.getCategory());
-        return p;
-    }
 }

@@ -1,14 +1,113 @@
 package pos.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import pos.model.*;
-import pos.pojo.BrandPojo;
-import pos.pojo.OrderItemPojo;
+import pos.pojo.*;
+import pos.service.ApiException;
+import pos.service.BrandService;
+import pos.service.ProductService;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class DataConversionUtil {
+
+    @Autowired
+    private BrandService brandService;
+
+    //convert brand form into brand pojo
+    public static BrandPojo convert(BrandForm brandForm) {
+        BrandPojo brandPojo = new BrandPojo();
+        brandPojo.setBrand(brandForm.getBrand());
+        brandPojo.setCategory(brandForm.getCategory());
+        return brandPojo;
+    }
+
+    //Converts a brand pojo into brand data
+    public static BrandData convert(BrandPojo brandPojo) {
+        BrandData brandData = new BrandData();
+        brandData.setBrand(brandPojo.getBrand());
+        brandData.setCategory(brandPojo.getCategory());
+        brandData.setId(brandPojo.getId());
+        return brandData;
+    }
+    //converts List of brand pojo to List of brand data
+    public static List<BrandData> convert(List<BrandPojo> brandPojoList) {
+        List<BrandData> brandDataList = new ArrayList<BrandData>();
+        for (BrandPojo brandPojo : brandPojoList) {
+            brandDataList.add(convert(brandPojo));
+        }
+        return brandDataList;
+    }
+
+    //converts product form into product pojo
+    public static ProductPojo convert(ProductForm productForm, BrandPojo brandPojo) throws ApiException {
+        ProductPojo productPojo = new ProductPojo();
+        productPojo.setBarcode(productForm.getBarcode());
+        productPojo.setName(productForm.getName());
+        productPojo.setMrp(productForm.getMrp());
+        productPojo.setBrandCategory(brandPojo.getId());
+        return productPojo;
+    }
+
+    //converts product pojo into product data
+    public static ProductData convert(ProductPojo productPojo, BrandPojo brandPojo) throws ApiException {
+        ProductData productData = new ProductData();
+        productData.setBarcode(productPojo.getBarcode());
+        productData.setName(productPojo.getName());
+        productData.setMrp(productPojo.getMrp());
+        productData.setId(productPojo.getId());
+        productData.setBrand(brandPojo.getBrand());
+        productData.setCategory(brandPojo.getCategory());
+        return productData;
+    }
+
+    //converts inventory form into inventory popjo
+    public static InventoryPojo convert(InventoryForm inventoryForm, ProductPojo productPojo) throws ApiException {
+        InventoryPojo inventoryPojo=new InventoryPojo();
+        inventoryPojo.setProductId(productPojo.getId());
+        inventoryPojo.setQuantity(inventoryForm.getQuantity());
+        return inventoryPojo;
+    }
+
+    //converts inventory pojo into inventory data
+    public static InventoryData convert(InventoryPojo inventoryPojo, ProductPojo productPojo) {
+        InventoryData inventoryData =new InventoryData();
+        inventoryData.setId(inventoryPojo.getId());
+        inventoryData.setQuantity(inventoryPojo.getQuantity());
+        inventoryData.setBarcode(productPojo.getBarcode());
+        return inventoryData;
+    }
+
+    //converts list of orderItemForms into list of orderItem pojo
+    public static List<OrderItemPojo> convertOrderItemForms(Map<String, ProductPojo> barcodeProduct,
+                                                            OrderItemForm[] orderItemForms) throws ApiException {
+        List<OrderItemPojo> orderItemPojoList = new ArrayList<OrderItemPojo>();
+        for (OrderItemForm orderItemForm : orderItemForms) {
+            orderItemPojoList.add(convert(barcodeProduct.get(orderItemForm.getBarcode()), orderItemForm));
+        }
+        return orderItemPojoList;
+    }
+
+    //converts orderItem form to orderItem pojo
+    public static OrderItemPojo convert(ProductPojo productPojo, OrderItemForm orderItemForm) throws ApiException {
+        OrderItemPojo orderItemPojo = new OrderItemPojo();
+        orderItemPojo.setProductId(productPojo.getId());
+        orderItemPojo.setQuantity(orderItemForm.getQuantity());
+        orderItemPojo.setSp(orderItemForm.getSp());
+        return orderItemPojo;
+    }
+
+    //Converts orderPojo to orderData
+    public static OrderData convert(OrderPojo orderPojo){
+        OrderData orderData = new OrderData();
+        orderData.setId(orderPojo.getId());
+        orderData.setDatetime(orderPojo.getDatetime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        return orderData;
+    }
+
 
     //Convert Map of quantity per BrandPojo to inventory list
     public static InventoryXmlList convertInventoryReportList(Map<BrandPojo, Integer> quantityPerBrandPojo) {
@@ -45,18 +144,18 @@ public class DataConversionUtil {
     }
 
     //Convert list of orderitems to invoice list
-    public static OrderInvoiceXmlList convertToInvoiceDataList(List<OrderItemPojo> lis) {
-        List<OrderInvoiceData> invoiceLis = new ArrayList<OrderInvoiceData>();
-        for (OrderItemPojo p : lis) {
-            OrderInvoiceData i = new OrderInvoiceData();
-            i.setId(p.getId());
-            i.setMrp(p.getProduct().getMrp());
-            i.setName(p.getProduct().getName());
-            i.setQuantity(p.getQuantity());
-            invoiceLis.add(i);
+    public static OrderInvoiceXmlList convertToInvoiceDataList(List<OrderItemPojo> orderItemPojoList, Map<OrderItemPojo,ProductPojo> productPojoList) throws ApiException {
+        List<OrderInvoiceData> orderInvoiceDataList = new ArrayList<OrderInvoiceData>();
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            OrderInvoiceData orderInvoiceData = new OrderInvoiceData();
+            orderInvoiceData.setId(orderItemPojo.getId());
+            orderInvoiceData.setMrp(orderItemPojo.getSp());
+            orderInvoiceData.setName(productPojoList.get(orderItemPojo).getName());
+            orderInvoiceData.setQuantity(orderItemPojo.getQuantity());
+            orderInvoiceDataList.add(orderInvoiceData);
         }
-        OrderInvoiceXmlList idl = new OrderInvoiceXmlList();
-        idl.setInvoicelist(invoiceLis);
-        return idl;
+        OrderInvoiceXmlList orderInvoiceXmlList = new OrderInvoiceXmlList();
+        orderInvoiceXmlList.setInvoicelist(orderInvoiceDataList);
+        return orderInvoiceXmlList;
     }
 }

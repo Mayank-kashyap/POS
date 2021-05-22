@@ -36,11 +36,4 @@ public class OrderDao extends AbstractDao{
         TypedQuery<OrderPojo> query = getQuery(select_all,OrderPojo.class);
         return query.getResultList();
     }
-
-    //todo remove delete
-    //Delete an order by id
-    public void delete(int id) {
-        OrderPojo orderPojo = em.find(OrderPojo.class, id);
-        em.remove(orderPojo);
-    }
 }

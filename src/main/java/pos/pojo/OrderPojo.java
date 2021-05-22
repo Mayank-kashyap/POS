@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Proxy(lazy=false)
 public class OrderPojo {
 
     //Generate id from 1000

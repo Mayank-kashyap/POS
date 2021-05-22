@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Proxy(lazy=false)
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"barcode"})})
 public class ProductPojo {
 
@@ -17,11 +16,5 @@ public class ProductPojo {
     private String barcode;
     private String name;
     private Double mrp;
-
-    //Many to one mapping with brand pojo
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name="brand_category", referencedColumnName="id"),
-    })
-    private BrandPojo brandPojo;
+    private Integer brandCategory;
 }

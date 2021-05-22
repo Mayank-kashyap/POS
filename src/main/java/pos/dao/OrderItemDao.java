@@ -34,12 +34,6 @@ public class OrderItemDao extends AbstractDao{
         return query.getResultList();
     }
 
-    //Delete orderItem
-    public void delete(int id){
-        OrderItemPojo orderItemPojo = em.find(OrderItemPojo.class, id);
-        em.remove(orderItemPojo);
-    }
-
     //Get orderItems for same orderId
     public List<OrderItemPojo> getFromOrderId(int orderId){
         String select_from_orderId = "select p from OrderItemPojo p where orderId=:orderId";

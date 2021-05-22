@@ -2,11 +2,12 @@ package pos.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pos.dao.BrandDao;
 import pos.dao.InventoryDao;
 import pos.dao.ProductDao;
-import pos.model.InventoryData;
-import pos.model.InventoryForm;
+import pos.pojo.BrandPojo;
 import pos.pojo.InventoryPojo;
+import pos.pojo.ProductPojo;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -18,16 +19,12 @@ public class InventoryService {
     private InventoryDao inventoryDao;
     @Autowired
     private ProductDao productDao;
+    @Autowired
+    private BrandDao brandDao;
 
     @Transactional(rollbackOn = ApiException.class)
     public void add(InventoryPojo inventoryPojo) throws ApiException{
-        if(inventoryPojo.getQuantity()<0){
-            throw new ApiException("Quantity cannot be negative");
-        }
-        if(inventoryPojo.getProduct().getBarcode()==null)
-        {
-            throw new ApiException("Product does not exist");
-        }
+        check(inventoryPojo);
         inventoryDao.insert(inventoryPojo);
     }
 
@@ -43,18 +40,19 @@ public class InventoryService {
 
     @Transactional(rollbackOn  = ApiException.class)
     public void update(int id, InventoryPojo inventoryPojo) throws ApiException {
-        InventoryPojo ex = getCheck(id);
-        ex.setQuantity(inventoryPojo.getQuantity());
-        inventoryDao.update(id,ex);
+        check(inventoryPojo);
+        InventoryPojo inventoryPojo1 = getCheck(id);
+        inventoryPojo1.setQuantity(inventoryPojo.getQuantity());
+        inventoryDao.update(id, inventoryPojo1);
     }
 
     @Transactional
     public InventoryPojo getCheck(int id) throws ApiException {
-        InventoryPojo p = inventoryDao.select(id);
-        if (p == null) {
+        InventoryPojo inventoryPojo = inventoryDao.select(id);
+        if (inventoryPojo == null) {
             throw new ApiException("Inventory with given ID does not exit, id: " + id);
         }
-        return p;
+        return inventoryPojo;
     }
 
     @Transactional
@@ -62,26 +60,22 @@ public class InventoryService {
         if(inventoryPojo.getQuantity()<0){
             throw new ApiException("Quantity cannot be negative");
         }
-        if(inventoryPojo.getProduct().getBarcode()==null)
-        {
-            throw new ApiException("Product does not exist");
-        }
     }
+
     @Transactional
-    public InventoryPojo convert(InventoryForm inventoryForm) {
-        InventoryPojo inventoryPojo=new InventoryPojo();
-       inventoryPojo.setId(productDao.getIdFromBarcode(inventoryForm.getBarcode()).getId());
-       inventoryPojo.setQuantity(inventoryForm.getQuantity());
+    public InventoryPojo getFromProductId(int productId) throws ApiException {
+        InventoryPojo inventoryPojo = inventoryDao.getFromProductId(productId);
+        if(inventoryPojo == null){
+            throw new ApiException("Inventory with given productId does not exit, productId: " + productId);
+        }
         return inventoryPojo;
     }
 
+    //todo exception
     @Transactional
-    public InventoryData convert(InventoryPojo inventoryPojo) {
-        InventoryData inventoryData =new InventoryData();
-        inventoryData.setId(inventoryPojo.getId());
-        inventoryData.setQuantity(inventoryPojo.getQuantity());
-        inventoryData.setBarcode(productDao.select(inventoryPojo.getId()).getBarcode());
-        return inventoryData;
+    public BrandPojo getBrandFromInventory(InventoryPojo inventoryPojo){
+        ProductPojo productPojo= productDao.select(inventoryPojo.getProductId());
+        BrandPojo brandPojo= brandDao.select(productPojo.getBrandCategory());
+        return brandPojo;
     }
-
 }

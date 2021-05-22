@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Proxy(lazy = false)
 public class OrderItemPojo {
 
     //Generate id starting from 100000
@@ -17,24 +16,9 @@ public class OrderItemPojo {
     private Integer id;
     private Integer quantity;
     private Double sp;
+    private Integer orderId;
+    private Integer ProductId;
 
-    //Many to one mapping with order pojo
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name="orderId", referencedColumnName="id"),
-    })
-    private OrderPojo orderPojo;
-
-    //Many to one mapping with product pojo
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name="productId", referencedColumnName="id"),
-    })
-    private ProductPojo product;
-
-    public BrandPojo getBrand(){
-        return product.getBrandPojo();
-    }
     public double getRevenue() {
         return quantity*sp;
     }

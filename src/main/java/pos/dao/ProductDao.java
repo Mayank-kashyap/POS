@@ -41,7 +41,7 @@ public class ProductDao extends AbstractDao{
         productPojo1.setMrp(productPojo.getMrp());
         productPojo1.setName(productPojo.getName());
         productPojo1.setBarcode(productPojo.getBarcode());
-        productPojo1.setBrandPojo(productPojo.getBrandPojo());
+        productPojo1.setBrandCategory(productPojo.getBrandCategory());
         em.merge(productPojo1);
     }
 
@@ -50,6 +50,11 @@ public class ProductDao extends AbstractDao{
         String select_id_barcode = "select p from ProductPojo p where barcode=:barcode";
         TypedQuery<ProductPojo> query = getQuery(select_id_barcode, ProductPojo.class);
         query.setParameter("barcode", barcode);
-        return query.getSingleResult();
+        List<ProductPojo> res=query.getResultList();
+        if(res.size()>0){
+            return res.get(0);
+        }
+        else
+            return null;
     }
 }

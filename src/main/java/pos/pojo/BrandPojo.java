@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Proxy(lazy=false)
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"brand","category"})})
 public class BrandPojo {
 

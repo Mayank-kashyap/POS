@@ -7,7 +7,7 @@ function getInventoryUrl(){
 //BUTTON ACTIONS
 function addInventory(event){
 	//Set the values to update
-	var $form = $("#inventory-form");
+	var $form = $("#inventory-add-form");
 	var json = toJson($form);
 	var url = getInventoryUrl();
     var check = validateInventory(json);
@@ -53,6 +53,7 @@ function updateInventory(event){
        },
 	   success: function(response) {
 	   		getInventoryList();
+	   		toastr.success("Product inventory updated successfully");
 	   },
 	   error: handleAjaxError
 	});
@@ -82,6 +83,11 @@ function validateInventory(json) {
 		toastr.error("Quantity field must not be empty and must be an integer value");
 		return false;
 	}
+
+	if(parseInt(json.quantity)<=0){
+    	toastr.error("Quantity must be positive");
+        return false;
+    	}
 	return true;
 }
 
