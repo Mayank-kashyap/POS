@@ -12,6 +12,12 @@ function getOrderItemUrl(){
 	return baseUrl + "/api/order_item";
 }
 
+function getSingleOrderUrl(){
+	var baseUrl = $("meta[name=baseUrl]").attr("content");
+	console.log(baseUrl);
+	return baseUrl + "/api/singleOrder";
+}
+
 function getAllOrdersUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content");
 	console.log(baseUrl);
@@ -76,13 +82,14 @@ function addOrderItem(event){
 	console.log(check);
 		ajaxQuery(url,'POST',json,function(response) {
 			getOrderList(response);
-
 			$("#add-orderItem-modal").modal('toggle');
+			toastr.options.closeButton=false;
+                        toastr.options.timeOut=3000;
+            	   		toastr.success("Order Item added successfully");
+            	   		toastr.options.closeButton=true;
+                        toastr.options.timeOut=none;
 		},handleAjaxError);
 	}
-
-
-
 	return false;
 }
 
@@ -100,6 +107,11 @@ function addOrder(event) {
 	ajaxQuery(url,'POST',json,function (response) {
 		getOrderList(response);
 		$("#add-order-modal").modal('toggle');
+		toastr.options.closeButton=false;
+                    toastr.options.timeOut=3000;
+        	   		toastr.success("Order added successfully");
+        	   		toastr.options.closeButton=true;
+                    toastr.options.timeOut=none;
 	},handleAjaxError);
 
 	return false;
@@ -123,6 +135,11 @@ function updateOrder(event){
 			getOrderList(response);
 			var orderitem_row = '.orderitemrows' + orderId;
 		  $(orderitem_row).show();
+		  toastr.options.closeButton=false;
+                      toastr.options.timeOut=3000;
+          	   		toastr.success("Order updated successfully");
+          	   		toastr.options.closeButton=true;
+                      toastr.options.timeOut=none;
 			console.log(json);
 		},handleAjaxError);
 	}
@@ -209,14 +226,14 @@ function displayOrdersList(data) {
 	data.reverse();
 	for(var i in data){
 		var e = data[i];
-		var buttonHtml = '<button class="btn btn-primary" onclick="initializeDropdown(' + e.id + ')">View</button>  <button class="btn btn-primary" onclick="downloadPDF('+ e.id +')">Download Invoice</button>  <button class="btn btn-primary" onclick="displayAddOrderItemModal(' + e.id + ')">Add Order Item</button>';
+		var buttonHtml = '<button class="btn btn-primary dropdown-toggle" onclick="initializeDropdown(' + e.id + ')">View Items<span class = "caret"></span></button>  <button class="btn btn-primary" onclick="downloadPDF('+ e.id +')">Download Invoice</button>  <button class="btn btn-primary btnSend" onclick="displayAddOrderItemModal(' + e.id + ')">Add Order Item</button>';
 		var row = '<tr class="order-header">'
 		+ '<td>' + e.id + '</td>'
 		+ '<td>'  + e.datetime + '</td>'
 		+ '<td>' + buttonHtml + '</td>'
 		+ '</tr>';
 		orderitemsHtml = '<tr><td colspan="3"><table class="table table-striped orderitemrows' + e.id +'"><tbody></tbody></table><td></tr>';
-    $tbody.append(row);
+        $tbody.append(row);
 		$tbody.append(orderitemsHtml);
 		getOrderItemsHtml(e.id);
 	}
@@ -236,10 +253,11 @@ function downloadPDF(id) {
 	$.ajax({
 	   url: url,
 	   type: 'GET',
-		 xhrFields: {
+	    xhrFields: {
         responseType: 'blob'
      },
 	   success: function(blob) {
+	   console.log(blob);
 		console.log(blob.size);
       	var link=document.createElement('a');
       	link.href=window.URL.createObjectURL(blob);
@@ -250,7 +268,6 @@ function downloadPDF(id) {
 	   		handleAjaxError(response);
 	   }
 	});
-
 }
 
 function displayOrderItem(data){
@@ -268,12 +285,10 @@ function displayAddOrderItemModal(order_id) {
 	$('#add-orderItem-modal').modal('toggle');
 }
 
-
 function createOrderItemsHtml(data,id) {
 
 	var table = $('.orderitemrows' + id).find('tbody');
 	var thHtml = '<tr>';
-	thHtml += '<th scope="col">Id</th>';
 	thHtml += '<th scope="col">Barcode</th>';
 	thHtml += '<th scope="col">Quantity</th>';
 	thHtml += '<th scope="col">SP</th>';
@@ -282,9 +297,8 @@ function createOrderItemsHtml(data,id) {
 	table.append(thHtml);
 	for(var i in data){
 		var e = data[i];
-		var buttonHtml = '<button class="btn btn-primary" onclick="displayEditOrderItem(' + e.id + ')">Edit</button>';
+		var buttonHtml = '<button class="btn btn-primary btnSend" onclick="displayEditOrderItem(' + e.id + ')">Edit</button>';
 		var row = '<tr>'
-		+ '<td>' + e.id + '</td>'
 		+ '<td>' + e.barcode + '</td>'
 		+ '<td>'  + e.quantity + '</td>'
 		+ '<td>' + e.sp + '</td>'
@@ -295,7 +309,7 @@ function createOrderItemsHtml(data,id) {
 }
 
 function initializeDropdown(id) {
-	console.log("Orderitems toggle");
+	console.log("OrderItems List");
 	var orderitem_row = '.orderitemrows' + id;
   $(orderitem_row).toggle();
 }

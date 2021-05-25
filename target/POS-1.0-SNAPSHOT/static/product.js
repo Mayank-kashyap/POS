@@ -94,7 +94,7 @@ function validateProduct(json) {
 		toastr.error("Name field must not be empty");
 		return false;
 	}
-	if(isBlank(json.mrp) || isNaN(parseFloat(json.mrp)) || !isFloat(json.mrp)) {
+	if(isBlank(json.mrp) || isNaN(parseFloat(json.mrp))) {
 		toastr.error("Mrp field must not be empty and must be a float value");
 		return false;
 	}
@@ -220,6 +220,8 @@ function displayUploadData(){
 }
 
 function displayProduct(data){
+    $("#product-edit-form input[name=brand]").val(data.brand);
+    $("#product-edit-form input[name=category]").val(data.category);
 	$("#product-edit-form input[name=barcode]").val(data.barcode);
 	$("#product-edit-form input[name=name]").val(data.name);
 	$("#product-edit-form input[name=mrp]").val(data.mrp);

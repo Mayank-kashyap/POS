@@ -14,5 +14,5 @@ import java.util.List;
 public class InventoryXmlList {
 
     @XmlElement(name="inventory_item")
-    private List<InventoryReportData> inventory_list;
+    private List<InventoryReportData> inventoryReportData;
 }

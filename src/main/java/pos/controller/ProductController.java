@@ -16,7 +16,6 @@ import pos.util.DataConversionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 //Controls the products page of the application
 @Api
@@ -53,7 +52,7 @@ public class ProductController extends ExceptionHandler{
     @RequestMapping(path = "/api/product", method = RequestMethod.GET)
     public List<ProductData> getAll() throws ApiException {
         List<ProductPojo> productPojoList = productService.getAll();
-        List<ProductData> productDataList = new ArrayList<ProductData>();
+        List<ProductData> productDataList = new ArrayList<>();
         for (ProductPojo productPojo : productPojoList){
             BrandPojo brandPojo= brandService.get(productPojo.getBrandCategory());
             productDataList.add(DataConversionUtil.convert(productPojo,brandPojo));

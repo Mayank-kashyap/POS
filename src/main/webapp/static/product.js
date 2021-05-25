@@ -28,7 +28,11 @@ function addProduct(event){
 	   success: function(response) {
 	   		getProductList();
 	   		$('#add-product-modal').modal('hide');
+	   		toastr.options.closeButton=false;
+            toastr.options.timeOut=3000;
 	   		toastr.success("Product added successfully");
+	   		toastr.options.closeButton=true;
+            toastr.options.timeOut=none;
 	   },
 	   error: handleAjaxError
 	});
@@ -57,6 +61,11 @@ function updateProduct(event){
        },
 	   success: function(response) {
 	   		getProductList();
+	   		toastr.options.closeButton=false;
+                        toastr.options.timeOut=3000;
+            	   		toastr.success("Product updated successfully");
+            	   		toastr.options.closeButton=true;
+                        toastr.options.timeOut=none;
 	   },
 	   error: handleAjaxError
 	});
@@ -163,7 +172,6 @@ function displayProductList(data){
 		var e = data[i];
 		var buttonHtml = ' <button class="btn btn-primary" onclick="displayEditProduct(' + e.id + ')">Edit</button>';
 		var row = '<tr>'
-		+ '<td>' + e.id + '</td>'
 		+ '<td>' + e.barcode + '</td>'
 		+ '<td>'  + e.brand + '</td>'
 		+ '<td>'  + e.category + '</td>'

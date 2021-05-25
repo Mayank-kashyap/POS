@@ -52,9 +52,5 @@ public class PdfConversionUtil {
         // for pretty-print XML in JAXB
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         m.marshal(list, file);
-
-
-
-
     }
 }

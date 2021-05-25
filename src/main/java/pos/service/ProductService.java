@@ -46,6 +46,7 @@ public class ProductService {
         return productDao.selectAll();
     }
 
+
     @Transactional(rollbackOn  = ApiException.class)
     public void update(int id, ProductPojo productPojo) throws ApiException {
         check(productPojo);
@@ -54,13 +55,11 @@ public class ProductService {
         productPojo1.setBarcode(productPojo.getBarcode());
         productPojo1.setName(productPojo.getName());
         productPojo1.setMrp(productPojo.getMrp());
-        productPojo1.setBrandCategory(productPojo.getBrandCategory());
         productDao.update(id, productPojo1);
     }
 
 
     //HELPER METHODS
-    @Transactional
     public void check(ProductPojo productPojo) throws ApiException {
         if(StringUtil.isEmpty(productPojo.getBarcode())) {
             throw new ApiException("Barcode cannot be empty");
@@ -104,9 +103,9 @@ public class ProductService {
     }
 
     @Transactional
-    protected static void normalize(ProductPojo p) {
-        p.setName(StringUtil.toLowerCase(p.getName()));
-        p.setBarcode(StringUtil.toLowerCase(p.getBarcode()));
+    protected static void normalize(ProductPojo productPojo) {
+        productPojo.setName(StringUtil.toLowerCase(productPojo.getName()));
+        productPojo.setBarcode(StringUtil.toLowerCase(productPojo.getBarcode()));
     }
 
 }

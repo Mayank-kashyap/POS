@@ -16,4 +16,5 @@ public class OrderPojo {
     @SequenceGenerator(name = "orderIdSequence",initialValue = 1000, allocationSize = 1, sequenceName = "orderId")
     private Integer id;
     private LocalDateTime datetime;
+    private Boolean isInvoiceGenerated;
 }

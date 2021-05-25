@@ -1,4 +1,5 @@
 
+
 //HELPER METHOD
 function ajaxQuery(url, type, data, successFunction,errorFunction) {
 	$.ajax({
@@ -132,6 +133,7 @@ function checkHeader(file,header_list,callback) {
 	});
 }
 
+
 $(function(){
     var current = location.pathname;
     $('#navbarNav a').each(function(){
@@ -215,8 +217,8 @@ toastr.options = {
   "debug": false,
   "progressBar": true,
   "positionClass": "toast-top-right",
-  "showDuration": "300",
-  "hideDuration": "1000",
+  "showDuration": "none",
+  "hideDuration": "none",
   "timeOut": "none",
   "extendedTimeOut": "none",
   "showEasing": "swing",
@@ -224,4 +226,5 @@ toastr.options = {
   "showMethod": "fadeIn",
   "hideMethod": "fadeOut"
 };
+
 $(document).ready(init);

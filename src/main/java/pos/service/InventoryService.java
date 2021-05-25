@@ -50,7 +50,7 @@ public class InventoryService {
     public InventoryPojo getCheck(int id) throws ApiException {
         InventoryPojo inventoryPojo = inventoryDao.select(id);
         if (inventoryPojo == null) {
-            throw new ApiException("Inventory with given ID does not exit, id: " + id);
+            throw new ApiException("Inventory with given ID does not exist, id: " + id);
         }
         return inventoryPojo;
     }
@@ -66,16 +66,15 @@ public class InventoryService {
     public InventoryPojo getFromProductId(int productId) throws ApiException {
         InventoryPojo inventoryPojo = inventoryDao.getFromProductId(productId);
         if(inventoryPojo == null){
-            throw new ApiException("Inventory with given productId does not exit, productId: " + productId);
+            throw new ApiException("Inventory with given productId does not exist, productId: " + productId);
         }
         return inventoryPojo;
     }
 
-    //todo exception
     @Transactional
-    public BrandPojo getBrandFromInventory(InventoryPojo inventoryPojo){
+    public BrandPojo getBrandFromInventory(InventoryPojo inventoryPojo) throws ApiException {
+        getCheck(inventoryPojo.getId());
         ProductPojo productPojo= productDao.select(inventoryPojo.getProductId());
-        BrandPojo brandPojo= brandDao.select(productPojo.getBrandCategory());
-        return brandPojo;
+        return brandDao.select(productPojo.getBrandCategory());
     }
 }

@@ -19,5 +19,5 @@ public class OrderInvoiceXmlList {
     @XmlElement(name="total")
     private Double total;
     @XmlElement(name="item")
-    private List<OrderInvoiceData> invoicelist;
+    private List<OrderInvoiceData> orderInvoiceData;
 }

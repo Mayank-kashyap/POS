@@ -3,10 +3,7 @@ package pos.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pos.model.*;
-import pos.pojo.BrandPojo;
-import pos.pojo.InventoryPojo;
-import pos.pojo.OrderItemPojo;
-import pos.pojo.ProductPojo;
+import pos.pojo.*;
 import pos.util.DataConversionUtil;
 import pos.util.PdfConversionUtil;
 
@@ -39,100 +36,100 @@ public class ReportService {
             PdfConversionUtil.generateXml(new File("brand.xml"), brandXmlList, BrandXmlList.class);
             return PdfConversionUtil.generatePDF(new File("brand.xml"), new StreamSource("brand.xsl"));
         } else if (type.contentEquals("inventory")) {
-            InventoryXmlList inventory_list = generateInventoryList();
-            PdfConversionUtil.generateXml(new File("inventory.xml"), inventory_list, InventoryXmlList.class);
+            InventoryXmlList inventoryXmlList = generateInventoryList();
+            PdfConversionUtil.generateXml(new File("inventory.xml"), inventoryXmlList, InventoryXmlList.class);
             return PdfConversionUtil.generatePDF(new File("inventory.xml"), new StreamSource("inventory.xsl"));
         }
         else if (type.contentEquals("sales")) {
 
-            SaleXmlList sales_data_list = generateSalesList((ReportFilter) obj[0]);
-            if(sales_data_list.getSales_list().isEmpty()) {
+            SaleXmlList saleXmlList = generateSalesList((ReportFilter) obj[0]);
+            if(saleXmlList.getSaleReportDataList().isEmpty()) {
                 throw new ApiException("No sales was done in this date range for this particular brand and category pair");
             }
-            PdfConversionUtil.generateXml(new File("sales.xml"), sales_data_list, SaleXmlList.class);
+            PdfConversionUtil.generateXml(new File("sales.xml"), saleXmlList, SaleXmlList.class);
             return PdfConversionUtil.generatePDF(new File("sales.xml"), new StreamSource("sales.xsl"));
         }
         else {
-            OrderInvoiceXmlList idl = generateInvoiceList((Integer) obj[0]);
-            PdfConversionUtil.generateXml(new File("invoice.xml"), idl, OrderInvoiceXmlList.class);
+            OrderInvoiceXmlList orderInvoiceXmlList = generateInvoiceList((Integer) obj[0]);
+            PdfConversionUtil.generateXml(new File("invoice.xml"), orderInvoiceXmlList, OrderInvoiceXmlList.class);
             return PdfConversionUtil.generatePDF(new File("invoice.xml"), new StreamSource("invoice.xsl"));
         }
     }
 
     /* Generating brand list for brand report */
-    public BrandXmlList generateBrandList() throws Exception {
-        List<BrandPojo> brand_pojo_list = brandService.getAll();
-        List<BrandData> brand_data_list = DataConversionUtil.convert(brand_pojo_list);
-        BrandXmlList brand_list = new BrandXmlList();
-        brand_list.setBrand_list(brand_data_list);
-        return brand_list;
+    public BrandXmlList generateBrandList() {
+        List<BrandPojo> brandPojoList = brandService.getAll();
+        List<BrandData> brandDataList = DataConversionUtil.convert(brandPojoList);
+        BrandXmlList brandXmlList = new BrandXmlList();
+        brandXmlList.setBrandDataList(brandDataList);
+        return brandXmlList;
     }
 
     /* Generate inventory list for inventory report */
-    public InventoryXmlList generateInventoryList() throws Exception {
-        List<InventoryPojo> inventory_pojo_list = inventoryService.getAll();
-        Map<BrandPojo, Integer> quantityPerBrandPojo = GroupByBrandCategory(inventory_pojo_list);
+    public InventoryXmlList generateInventoryList() throws ApiException {
+        List<InventoryPojo> inventoryPojoList = inventoryService.getAll();
+        Map<BrandPojo, Integer> quantityPerBrandPojo = GroupByBrandCategory(inventoryPojoList);
         return DataConversionUtil.convertInventoryReportList(quantityPerBrandPojo);
 
     }
 
     /* Getting inventory per Brand Category */
-    private Map<BrandPojo, Integer> GroupByBrandCategory(List<InventoryPojo> inventory_pojo_list) {
+    private Map<BrandPojo, Integer> GroupByBrandCategory(List<InventoryPojo> inventoryPojoList) throws ApiException {
         Map<BrandPojo, Integer> map = new HashMap<>();
-        for (InventoryPojo inventoryPojo : inventory_pojo_list) {
+        for (InventoryPojo inventoryPojo : inventoryPojoList) {
             map.merge(inventoryService.getBrandFromInventory(inventoryPojo), inventoryPojo.getQuantity(), Integer::sum);
         }
         return map;
     }
 
+    //
     /*Generate sales list for sales report */
-    public SaleXmlList generateSalesList(ReportFilter sales_filter) throws Exception {
+    public SaleXmlList generateSalesList(ReportFilter reportFilter) throws Exception {
 
-        List<OrderItemPojo> order_list = orderService.getAll();
-        List<OrderItemPojo> filtered_orderitem_list = FilterByDate(sales_filter, order_list);
-        Map<BrandPojo, Integer> quantityPerBrandCategory = getMapQuantity(sales_filter, filtered_orderitem_list);
-        Map<BrandPojo, Double> revenuePerBrandCategory = getMapRevenue(sales_filter, filtered_orderitem_list);
+        List<OrderItemPojo> orderItemPojoList = orderService.getAll();
+        List<OrderItemPojo> orderItemPojoList1 = FilterByDate(reportFilter, orderItemPojoList);
+        Map<BrandPojo, Integer> quantityPerBrandCategory = getMapQuantity(reportFilter, orderItemPojoList1);
+        Map<BrandPojo, Double> revenuePerBrandCategory = getMapRevenue(reportFilter, orderItemPojoList1);
         return DataConversionUtil.convertSalesList(quantityPerBrandCategory, revenuePerBrandCategory);
     }
 
     /*Getting order items based on date */
-    private List<OrderItemPojo> FilterByDate(ReportFilter sales_filter, List<OrderItemPojo> orderitem_list) throws ApiException {
+    private List<OrderItemPojo> FilterByDate(ReportFilter reportFilter, List<OrderItemPojo> orderItemPojoList) throws ApiException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDateTime startDate = LocalDate.parse(sales_filter.getStartDate(), formatter).atStartOfDay();
-        LocalDateTime endDate = LocalDate.parse(sales_filter.getEndDate(), formatter).atStartOfDay().plusDays(1);
-        List<OrderItemPojo> filtered_date_list = new ArrayList<>();
-        for (OrderItemPojo orderitem : orderitem_list) {
-            if (((orderService.getOrder(orderitem.getOrderId())).getDatetime().isAfter(startDate)
-                    && (orderService.getOrder(orderitem.getOrderId())).getDatetime().isBefore(endDate)) || (orderService.getOrder(orderitem.getOrderId())).getDatetime().isEqual(startDate)
-                    && (orderService.getOrder(orderitem.getOrderId())).getDatetime().isEqual(endDate)) {
-                filtered_date_list.add(orderitem);
+        LocalDateTime startDate = LocalDate.parse(reportFilter.getStartDate(), formatter).atStartOfDay();
+        LocalDateTime endDate = LocalDate.parse(reportFilter.getEndDate(), formatter).atStartOfDay().plusDays(1);
+        List<OrderItemPojo> orderItemPojoList1 = new ArrayList<>();
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            if (((orderService.getOrder(orderItemPojo.getOrderId())).getDatetime().isAfter(startDate)
+                    && (orderService.getOrder(orderItemPojo.getOrderId())).getDatetime().isBefore(endDate)) || (orderService.getOrder(orderItemPojo.getOrderId())).getDatetime().isEqual(startDate)
+                    && (orderService.getOrder(orderItemPojo.getOrderId())).getDatetime().isEqual(endDate)) {
+                orderItemPojoList1.add(orderItemPojo);
             }
         }
-        return filtered_date_list;
+        return orderItemPojoList1;
     }
 
     /* Getting quantity sold based on brand category */
-    private Map<BrandPojo, Integer> getMapQuantity(ReportFilter sales_filter, List<OrderItemPojo> orderitem_list) throws ApiException {
+    private Map<BrandPojo, Integer> getMapQuantity(ReportFilter reportFilter, List<OrderItemPojo> orderItemPojoList) throws ApiException {
         Map<BrandPojo, Integer> quantityPerBrandCategory = new HashMap<>();
-        for (OrderItemPojo order_item : orderitem_list) {
-            if (Equals(orderService.getBrandFromOrderItem(order_item).getBrand(), sales_filter.getBrand())
-                    && Equals(orderService.getBrandFromOrderItem(order_item).getCategory(), sales_filter.getCategory())) {
-                quantityPerBrandCategory.merge(orderService.getBrandFromOrderItem(order_item), order_item.getQuantity(), Integer::sum);
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            if (Equals(orderService.getBrandFromOrderItem(orderItemPojo).getBrand(), reportFilter.getBrand())
+                    && Equals(orderService.getBrandFromOrderItem(orderItemPojo).getCategory(), reportFilter.getCategory())) {
+                quantityPerBrandCategory.merge(orderService.getBrandFromOrderItem(orderItemPojo), orderItemPojo.getQuantity(), Integer::sum);
             }
         }
         return quantityPerBrandCategory;
     }
 
     /*Getting revenue generated based on brand category */
-    private Map<BrandPojo, Double> getMapRevenue(ReportFilter sales_filter, List<OrderItemPojo> orderitem_list) throws ApiException {
+    private Map<BrandPojo, Double> getMapRevenue(ReportFilter reportFilter, List<OrderItemPojo> orderItemPojoList) throws ApiException {
         Map<BrandPojo, Double> revenuePerBrandCategory = new HashMap<>();
-        for (OrderItemPojo order_item : orderitem_list) {
-            if (Equals(orderService.getBrandFromOrderItem(order_item).getBrand(), sales_filter.getBrand())
-                    && Equals(orderService.getBrandFromOrderItem(order_item).getCategory(), sales_filter.getCategory())) {
-                revenuePerBrandCategory.merge(orderService.getBrandFromOrderItem(order_item), order_item.getRevenue(), Double::sum);
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            if (Equals(orderService.getBrandFromOrderItem(orderItemPojo).getBrand(), reportFilter.getBrand())
+                    && Equals(orderService.getBrandFromOrderItem(orderItemPojo).getCategory(), reportFilter.getCategory())) {
+                revenuePerBrandCategory.merge(orderService.getBrandFromOrderItem(orderItemPojo), orderItemPojo.getRevenue(), Double::sum);
             }
         }
-        ;
         return revenuePerBrandCategory;
     }
 
@@ -141,8 +138,9 @@ public class ReportService {
         return (a.contentEquals(b) || b.isEmpty());
     }
 
-    public OrderInvoiceXmlList generateInvoiceList(int order_id) throws Exception {
-        List<OrderItemPojo> orderItemPojoList = orderService.getOrderItems(order_id);
+    //todo check invoice generated
+    public OrderInvoiceXmlList generateInvoiceList(int orderId) throws Exception {
+        List<OrderItemPojo> orderItemPojoList = orderService.getOrderItems(orderId);
         Map<OrderItemPojo,ProductPojo> productPojoList=orderService.getProductPojos(orderItemPojoList);
         OrderInvoiceXmlList orderInvoiceXmlList = DataConversionUtil.convertToInvoiceDataList(orderItemPojoList,productPojoList);
         orderInvoiceXmlList.setOrder_id(orderItemPojoList.get(0).getOrderId());
@@ -150,14 +148,15 @@ public class ReportService {
         orderInvoiceXmlList.setDatetime(orderService.getOrder(orderItemPojoList.get(0).getOrderId()).getDatetime().format(formatter));
         double total = calculateTotal(orderInvoiceXmlList);
         orderInvoiceXmlList.setTotal(total);
+        orderService.getOrder(orderId).setIsInvoiceGenerated(true);
         return orderInvoiceXmlList;
     }
 
     /*Calculating total cost of order */
-    private static double calculateTotal(OrderInvoiceXmlList idl) {
+    private static double calculateTotal(OrderInvoiceXmlList orderInvoiceXmlList) {
         double total = 0;
-        for (OrderInvoiceData i : idl.getInvoicelist()) {
-            total += (i.getMrp() * i.getQuantity());
+        for (OrderInvoiceData orderInvoiceData : orderInvoiceXmlList.getOrderInvoiceData()) {
+            total += (orderInvoiceData.getMrp() * orderInvoiceData.getQuantity());
         }
         return total;
     }

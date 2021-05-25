@@ -1,11 +1,9 @@
 package pos.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import pos.model.*;
 import pos.pojo.*;
 import pos.service.ApiException;
-import pos.service.BrandService;
-import pos.service.ProductService;
+
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -13,9 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 public class DataConversionUtil {
-
-    @Autowired
-    private BrandService brandService;
 
     //convert brand form into brand pojo
     public static BrandPojo convert(BrandForm brandForm) {
@@ -35,7 +30,7 @@ public class DataConversionUtil {
     }
     //converts List of brand pojo to List of brand data
     public static List<BrandData> convert(List<BrandPojo> brandPojoList) {
-        List<BrandData> brandDataList = new ArrayList<BrandData>();
+        List<BrandData> brandDataList = new ArrayList<>();
         for (BrandPojo brandPojo : brandPojoList) {
             brandDataList.add(convert(brandPojo));
         }
@@ -84,7 +79,7 @@ public class DataConversionUtil {
     //converts list of orderItemForms into list of orderItem pojo
     public static List<OrderItemPojo> convertOrderItemForms(Map<String, ProductPojo> barcodeProduct,
                                                             OrderItemForm[] orderItemForms) throws ApiException {
-        List<OrderItemPojo> orderItemPojoList = new ArrayList<OrderItemPojo>();
+        List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
         for (OrderItemForm orderItemForm : orderItemForms) {
             orderItemPojoList.add(convert(barcodeProduct.get(orderItemForm.getBarcode()), orderItemForm));
         }
@@ -100,6 +95,16 @@ public class DataConversionUtil {
         return orderItemPojo;
     }
 
+    //converts order item pojo to order data
+    public static OrderItemData convert(OrderItemPojo orderItemPojo, ProductPojo productPojo) throws ApiException {
+        OrderItemData orderItemData = new OrderItemData();
+        orderItemData.setId(orderItemPojo.getId());
+        orderItemData.setBarcode(productPojo.getBarcode());
+        orderItemData.setQuantity(orderItemPojo.getQuantity());
+        orderItemData.setOrderId(orderItemPojo.getOrderId());
+        orderItemData.setSp(orderItemPojo.getSp());
+        return orderItemData;
+    }
     //Converts orderPojo to orderData
     public static OrderData convert(OrderPojo orderPojo){
         OrderData orderData = new OrderData();
@@ -111,7 +116,7 @@ public class DataConversionUtil {
 
     //Convert Map of quantity per BrandPojo to inventory list
     public static InventoryXmlList convertInventoryReportList(Map<BrandPojo, Integer> quantityPerBrandPojo) {
-        List<InventoryReportData> inventory_report_list = new ArrayList<InventoryReportData>();
+        List<InventoryReportData> inventory_report_list = new ArrayList<>();
         for (BrandPojo brand_pojo : quantityPerBrandPojo.keySet()) {
             InventoryReportData d = new InventoryReportData();
             d.setBrand(brand_pojo.getBrand());
@@ -120,7 +125,7 @@ public class DataConversionUtil {
             inventory_report_list.add(d);
         }
         InventoryXmlList inventory_list = new InventoryXmlList();
-        inventory_list.setInventory_list(inventory_report_list);
+        inventory_list.setInventoryReportData(inventory_report_list);
         return inventory_list;
     }
 
@@ -128,7 +133,7 @@ public class DataConversionUtil {
     public static SaleXmlList convertSalesList(Map<BrandPojo, Integer> quantityPerBrandCategory,
                                                Map<BrandPojo, Double> revenuePerBrandCategory) {
 
-        List<SaleReportData> sales_list = new ArrayList<SaleReportData>();
+        List<SaleReportData> sales_list = new ArrayList<>();
         for(BrandPojo brand: quantityPerBrandCategory.keySet()) {
             SaleReportData sales = new SaleReportData();
             sales.setBrand(brand.getBrand());
@@ -137,15 +142,15 @@ public class DataConversionUtil {
             sales.setRevenue(revenuePerBrandCategory.get(brand));
             sales_list.add(sales);
         }
-        SaleXmlList sales_data_list = new SaleXmlList();
-        sales_data_list.setSales_list(sales_list);
-        return sales_data_list;
+        SaleXmlList saleXmlList = new SaleXmlList();
+        saleXmlList.setSaleReportDataList(sales_list);
+        return saleXmlList;
 
     }
 
     //Convert list of orderitems to invoice list
-    public static OrderInvoiceXmlList convertToInvoiceDataList(List<OrderItemPojo> orderItemPojoList, Map<OrderItemPojo,ProductPojo> productPojoList) throws ApiException {
-        List<OrderInvoiceData> orderInvoiceDataList = new ArrayList<OrderInvoiceData>();
+    public static OrderInvoiceXmlList convertToInvoiceDataList(List<OrderItemPojo> orderItemPojoList, Map<OrderItemPojo,ProductPojo> productPojoList) {
+        List<OrderInvoiceData> orderInvoiceDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             OrderInvoiceData orderInvoiceData = new OrderInvoiceData();
             orderInvoiceData.setId(orderItemPojo.getId());
@@ -155,7 +160,7 @@ public class DataConversionUtil {
             orderInvoiceDataList.add(orderInvoiceData);
         }
         OrderInvoiceXmlList orderInvoiceXmlList = new OrderInvoiceXmlList();
-        orderInvoiceXmlList.setInvoicelist(orderInvoiceDataList);
+        orderInvoiceXmlList.setOrderInvoiceData(orderInvoiceDataList);
         return orderInvoiceXmlList;
     }
 }

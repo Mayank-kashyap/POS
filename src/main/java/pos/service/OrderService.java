@@ -2,19 +2,18 @@ package pos.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pos.dao.InventoryDao;
 import pos.dao.OrderDao;
 import pos.dao.OrderItemDao;
 import pos.dao.ProductDao;
-import pos.model.*;
 import pos.pojo.BrandPojo;
 import pos.pojo.OrderItemPojo;
 import pos.pojo.OrderPojo;
 import pos.pojo.ProductPojo;
 
-import javax.transaction.Transactional;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,23 +37,24 @@ public class OrderService {
     private BrandService brandService;
 
     //Adds a new order
-    @org.springframework.transaction.annotation.Transactional(rollbackFor = ApiException.class)
+    @Transactional(rollbackFor = ApiException.class)
     public int add(List<OrderItemPojo> orderItemPojoList) throws ApiException{
         OrderPojo orderPojo = new OrderPojo();
         orderPojo.setDatetime(LocalDateTime.now());
-        int order_id=orderDao.insert(orderPojo);
+        orderPojo.setIsInvoiceGenerated(false);
+        int orderId =orderDao.insert(orderPojo);
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            orderItemPojo.setOrderId(order_id);
+            orderItemPojo.setOrderId(orderId);
             check(orderItemPojo);
             orderItemDao.insert(orderItemPojo);
             updateInventory(orderItemPojo,0);
         }
-        return order_id;
+        return orderId;
     }
 
 
     // Adding order item to an existing order
-    @org.springframework.transaction.annotation.Transactional(rollbackFor = ApiException.class)
+    @Transactional(rollbackFor = ApiException.class)
     public void addOrderItem(int orderId, OrderItemPojo orderItemPojo) throws ApiException {
         check(orderItemPojo);
         OrderPojo orderPojo=orderDao.select(orderId);
@@ -70,28 +70,27 @@ public class OrderService {
         orderItemDao.insert(orderItemPojo);
     }
 
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public List<OrderItemPojo> getOrderItems(int orderId) throws ApiException {
         OrderPojo orderPojo=checkIfExistsOrder(orderId);
         return orderItemDao.getFromOrderId(orderId);
     }
 
     // Fetching an Order by id
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public OrderPojo getOrder(int id) throws ApiException {
         return checkIfExistsOrder(id);
     }
 
     // Fetching all orders
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public List<OrderPojo> getAllOrders() {
         return orderDao.selectAll();
     }
 
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public OrderItemPojo get(int id) throws ApiException {
-        OrderItemPojo p = checkIfExists(id);
-        return p;
+        return checkIfExists(id);
     }
 
     //fetching all order items
@@ -100,17 +99,9 @@ public class OrderService {
         return orderItemDao.selectAll();
     }
 
-    @Transactional
-    public OrderPojo getCheck(int id) throws ApiException {
-        OrderPojo orderPojo = orderDao.select(id);
-        if (orderPojo == null) {
-            throw new ApiException("Order with given ID does not exit, id: " + id);
-        }
-        return orderPojo;
-    }
 
 
-    @org.springframework.transaction.annotation.Transactional(rollbackFor = ApiException.class)
+    @Transactional(rollbackFor = ApiException.class)
     public void update(int id, OrderItemPojo orderItemPojo) throws ApiException {
         check(orderItemPojo);
         checkIfExists(id);
@@ -126,7 +117,7 @@ public class OrderService {
 
 
     //Updates inventory for every added, updated or deleted order
-    @org.springframework.transaction.annotation.Transactional(rollbackFor = ApiException.class)
+    @Transactional(rollbackFor = ApiException.class)
     protected void updateInventory(OrderItemPojo orderItemPojo, int old_qty) throws ApiException {
         int quantity = orderItemPojo.getQuantity();
         int quantityInInventory;
@@ -156,7 +147,7 @@ public class OrderService {
         }
     }
 
-    @org.springframework.transaction.annotation.Transactional(rollbackFor = ApiException.class)
+    @Transactional(rollbackFor = ApiException.class)
     public OrderItemPojo checkIfExists(int id) throws ApiException {
         OrderItemPojo orderItemPojo = orderItemDao.select(id);
         if (orderItemPojo == null) {
@@ -166,7 +157,7 @@ public class OrderService {
     }
 
     //Checks if order with given id exists or not
-    @org.springframework.transaction.annotation.Transactional(rollbackFor = ApiException.class)
+    @Transactional(rollbackFor = ApiException.class)
     public OrderPojo checkIfExistsOrder(int id) throws ApiException {
         OrderPojo orderPojo = orderDao.select(id);
         if (orderPojo == null) {
@@ -175,32 +166,17 @@ public class OrderService {
         return orderPojo;
     }
 
-    //todo exception
     @Transactional
     public BrandPojo getBrandFromOrderItem(OrderItemPojo orderItemPojo) throws ApiException {
         ProductPojo productPojo= productService.get(orderItemPojo.getProductId());
-        BrandPojo brandPojo=brandService.get(productPojo.getBrandCategory());
-        return brandPojo;
-    }
-
-    @Transactional
-    public static OrderItemData convert(OrderItemPojo orderItemPojo, ProductPojo productPojo) throws ApiException {
-        OrderItemData orderItemData = new OrderItemData();
-        orderItemData.setId(orderItemPojo.getId());
-        orderItemData.setBarcode(productPojo.getBarcode());
-        orderItemData.setQuantity(orderItemPojo.getQuantity());
-        orderItemData.setOrderId(orderItemPojo.getId());
-        orderItemData.setSp(orderItemPojo.getSp());
-        return orderItemData;
+        return brandService.get(productPojo.getBrandCategory());
     }
 
     @Transactional
     public Map<OrderItemPojo,ProductPojo> getProductPojos(List<OrderItemPojo> orderItemPojoList) throws ApiException {
-        //List<ProductPojo> productPojoList = new ArrayList<>();
         Map<OrderItemPojo,ProductPojo> orderItemPojoProductPojoMap=new HashMap<>();
         for(OrderItemPojo orderItemPojo:orderItemPojoList){
             ProductPojo productPojo= productService.get(orderItemPojo.getProductId());
-            //productPojoList.add(productPojo);
             orderItemPojoProductPojoMap.put(orderItemPojo,productPojo);
         }
         return orderItemPojoProductPojoMap;

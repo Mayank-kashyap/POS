@@ -50,7 +50,7 @@ public class InventoryController extends ExceptionHandler{
     @RequestMapping(path = "/api/inventory", method = RequestMethod.GET)
     public List<InventoryData> getAll() throws ApiException {
         List<InventoryPojo> inventoryPojoList = inventoryService.getAll();
-        List<InventoryData> inventoryDataList = new ArrayList<InventoryData>();
+        List<InventoryData> inventoryDataList = new ArrayList<>();
         for (InventoryPojo inventoryPojo : inventoryPojoList){
             ProductPojo productPojo=productService.get(inventoryPojo.getProductId());
             inventoryDataList.add(DataConversionUtil.convert(inventoryPojo,productPojo));

@@ -10,8 +10,6 @@ import pos.pojo.BrandPojo;
 import pos.service.ApiException;
 import pos.service.BrandService;
 import pos.util.DataConversionUtil;
-
-import java.util.ArrayList;
 import java.util.List;
 
 //Controls the brand page of the application
@@ -44,8 +42,7 @@ public class BrandController extends ExceptionHandler{
     @RequestMapping(path = "/api/brand", method = RequestMethod.GET)
     public List<BrandData> getAll(){
         List<BrandPojo> brandPojoList = brandService.getAll();
-        List<BrandData> brandDataList = DataConversionUtil.convert(brandPojoList);
-        return brandDataList;
+        return DataConversionUtil.convert(brandPojoList);
     }
 
     //Updates a brand

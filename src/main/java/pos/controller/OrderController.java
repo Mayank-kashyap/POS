@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import pos.dao.ProductDao;
 import pos.model.OrderData;
 import pos.model.OrderItemData;
 import pos.model.OrderItemForm;
@@ -30,16 +29,13 @@ public class OrderController extends ExceptionHandler{
 
     @Autowired
     private ProductService productService;
-
-    @Autowired
-    private ProductDao productDao;
     
     //Adds an order
     @ApiOperation(value = "Adds Order Details")
     @RequestMapping(path = "/api/order", method = RequestMethod.POST)
     public OrderData add(@RequestBody OrderItemForm[] orderItemForms) throws ApiException{
-        Map<String, ProductPojo> allProductPojosByBarcode = productService.getAllProductPojosByBarcode();
-        List<OrderItemPojo> orderItemList = DataConversionUtil.convertOrderItemForms(allProductPojosByBarcode, orderItemForms);
+        Map<String, ProductPojo> allProductPojoByBarcode = productService.getAllProductPojosByBarcode();
+        List<OrderItemPojo> orderItemList = DataConversionUtil.convertOrderItemForms(allProductPojoByBarcode, orderItemForms);
         int orderId = orderService.add(orderItemList);
         return DataConversionUtil.convert(orderService.getOrder(orderId));
     }
@@ -60,7 +56,7 @@ public class OrderController extends ExceptionHandler{
     public OrderItemData get(@PathVariable int id) throws ApiException {
         OrderItemPojo orderItemPojo = orderService.get(id);
         ProductPojo productPojo= productService.get(orderItemPojo.getProductId());
-        return OrderService.convert(orderItemPojo,productPojo);
+        return DataConversionUtil.convert(orderItemPojo,productPojo);
     }
 
     //Gets list of Order Items
@@ -71,7 +67,7 @@ public class OrderController extends ExceptionHandler{
         List<OrderItemData> orderItemDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             ProductPojo productPojo= productService.get(orderItemPojo.getProductId());
-            orderItemDataList.add(OrderService.convert(orderItemPojo,productPojo));
+            orderItemDataList.add(DataConversionUtil.convert(orderItemPojo,productPojo));
         }
         return orderItemDataList;
     }
@@ -96,7 +92,7 @@ public class OrderController extends ExceptionHandler{
         List<OrderItemData> orderItemDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             ProductPojo productPojo= productService.get(orderItemPojo.getProductId());
-            orderItemDataList.add(OrderService.convert(orderItemPojo,productPojo));
+            orderItemDataList.add(DataConversionUtil.convert(orderItemPojo,productPojo));
         }
         return orderItemDataList;
     }

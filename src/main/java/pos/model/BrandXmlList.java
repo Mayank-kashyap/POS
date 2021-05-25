@@ -14,5 +14,5 @@ import java.util.List;
 public class BrandXmlList {
 
     @XmlElement(name = "brand_item")
-    List<BrandData> brand_list;
+    List<BrandData> brandDataList;
 }

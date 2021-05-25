@@ -15,5 +15,5 @@ import java.util.List;
 public class SaleXmlList {
 
     @XmlElement(name="sales_item")
-    private List<SaleReportData> sales_list;
+    private List<SaleReportData> saleReportDataList;
 }

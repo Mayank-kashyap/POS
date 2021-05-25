@@ -2,7 +2,6 @@ package pos.dao;
 
 import org.springframework.stereotype.Repository;
 import pos.pojo.InventoryPojo;
-import pos.pojo.ProductPojo;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"brand","category"})})
 public class BrandPojo {
 
-    //Generate id from 1
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;

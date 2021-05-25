@@ -1,5 +1,4 @@
 
-//Gets the url of brand page
 function getBrandUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content")
 	return baseUrl + "/api/brand";
@@ -25,7 +24,11 @@ function addBrand(event){
     	   success: function(response) {
     	   		getBrandList();
     	   		$('#add-brand-modal').modal('hide');
+    	   		toastr.options.closeButton=false;
+    	   		toastr.options.timeOut=3000;
     	   		toastr.success("Brand added successfully");
+    	   		toastr.options.closeButton=true;
+                toastr.options.timeOut=none;
     	   },
     	   error: handleAjaxError
     	});
@@ -53,7 +56,11 @@ function updateBrand(event){
        },
 	   success: function(response) {
 	   		getBrandList();
+	   		toastr.options.closeButton=false;
+            toastr.options.timeOut=3000;
             toastr.success("Brand updated successfully");
+            toastr.options.closeButton=true;
+            toastr.options.timeOut=none;
 	   },
 	   error: handleAjaxError
 	});
@@ -113,29 +120,28 @@ function uploadRows(){
 	//Process next row
 	var row = fileData[processCount];
 	processCount++;
-
 	var json = JSON.stringify(row);
+	var check=validateBrand(json);
 	var url = getBrandUrl();
 
-	//Make ajax call
-	$.ajax({
-	   url: url,
-	   type: 'POST',
-	   data: json,
-	   headers: {
-       	'Content-Type': 'application/json'
-       },
-	   success: function(response) {
-	   		uploadRows();
-	   },
-	   error: function(response){
+    	//Make ajax call
+    	$.ajax({
+    	   url: url,
+    	   type: 'POST',
+    	   data: json,
+    	   headers: {
+           	'Content-Type': 'application/json'
+           },
+    	   success: function(response) {
+    	   		uploadRows();
+    	   },
+    	   error: function(response){
 
-	   		row.error=response.responseText;
-	   		errorData.push(row);
-	   		uploadRows();
-	   }
-	});
-
+    	   		row.error=response.responseText;
+    	   		errorData.push(row);
+    	   		uploadRows();
+    	   }
+    	});
 }
 
 function downloadErrors(){
@@ -151,7 +157,6 @@ function displayBrandList(data){
 		let e = data[i];
 		var buttonHtml = ' <button class="btn btn-primary" title="Edit brand" onclick="displayEditBrand(' + e.id + ')">Edit</button>';
 		var row = '<tr>'
-		+ '<td>' + e.id + '</td>'
 		+ '<td>' + e.brand + '</td>'
 		+ '<td>'  + e.category + '</td>'
 		+ '<td>' + buttonHtml + '</td>'

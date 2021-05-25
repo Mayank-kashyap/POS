@@ -22,7 +22,11 @@ function addInventory(event){
 	   success: function(response) {
 	   		getInventoryList();
 	   		$('#add-inventory-modal').modal('hide');
+	   		toastr.options.closeButton=false;
+            toastr.options.timeOut=3000;
             toastr.success("Product Inventory added successfully");
+            toastr.options.closeButton=true;
+            toastr.options.timeOut=none;
 	   },
 	   error: handleAjaxError
 	});
@@ -53,7 +57,11 @@ function updateInventory(event){
        },
 	   success: function(response) {
 	   		getInventoryList();
+	   		toastr.options.closeButton=false;
+            toastr.options.timeOut=3000;
 	   		toastr.success("Product inventory updated successfully");
+	   		toastr.options.closeButton=true;
+            toastr.options.timeOut=none;
 	   },
 	   error: handleAjaxError
 	});
@@ -153,7 +161,6 @@ function displayInventoryList(data){
 		var e = data[i];
 		var buttonHtml = ' <button class="btn btn-primary" onclick="displayEditInventory(' + e.id + ')">Edit</button>';
 		var row = '<tr>'
-		+ '<td>' + e.id + '</td>'
 		+ '<td>' + e.barcode + '</td>'
 		+ '<td>'  + e.quantity + '</td>'
 		+ '<td>' + buttonHtml + '</td>'

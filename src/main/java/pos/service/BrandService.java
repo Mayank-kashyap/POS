@@ -19,7 +19,7 @@ public class BrandService {
     //Add a brand
     @Transactional(rollbackOn = ApiException.class)
     public void add(BrandPojo brandPojo) throws ApiException{
-        checkNull(brandPojo);
+        check(brandPojo);
         normalize(brandPojo);
         brandDao.insert(brandPojo);
     }
@@ -39,7 +39,7 @@ public class BrandService {
     //update a brand
     @Transactional(rollbackOn  = ApiException.class)
     public void update(int id, BrandPojo brandPojo) throws ApiException {
-        checkNull(brandPojo);
+        check(brandPojo);
         normalize(brandPojo);
         BrandPojo brandPojo1 = getCheck(id);
         brandPojo1.setBrand(brandPojo.getBrand());
@@ -60,7 +60,7 @@ public class BrandService {
     }
 
     //checks whether the entered values are null or not
-    public void checkNull(BrandPojo brandPojo) throws ApiException {
+    public void check(BrandPojo brandPojo) throws ApiException {
         if(StringUtil.isEmpty(brandPojo.getBrand())) {
             throw new ApiException("Brand name cannot be empty");
         }
@@ -77,11 +77,11 @@ public class BrandService {
     @Transactional()
     public BrandPojo getBrandPojo(String brand, String category) throws ApiException {
 
-        List<BrandPojo> brand_list = brandDao.getIdFromBrandCategory(brand, category);
-        if (brand_list.isEmpty()) {
+        List<BrandPojo> brandPojoList = brandDao.getIdFromBrandCategory(brand, category);
+        if (brandPojoList.isEmpty()) {
             throw new ApiException("The brand name and category given does not exist " + brand + " " + category);
         }
-        return brand_list.get(0);
+        return brandPojoList.get(0);
     }
 
     //normalizes a pojo into lower case and trimmed

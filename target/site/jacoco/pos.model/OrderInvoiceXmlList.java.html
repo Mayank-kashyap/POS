@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderInvoiceXmlList.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pos</a> &gt; <a href="index.source.html" class="el_package">pos.model</a> &gt; <span class="el_source">OrderInvoiceXmlList.java</span></div><h1>OrderInvoiceXmlList.java</h1><pre class="source lang-java linenums">package pos.model;
+
+import lombok.Data;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
+
+<span class="pc bnc" id="L11" title="All 38 branches missed.">@Data</span>
+@XmlRootElement(name = &quot;items&quot;)
+@XmlAccessorType(XmlAccessType.FIELD)
+public class OrderInvoiceXmlList {
+    @XmlElement(name=&quot;order_id&quot;)
+<span class="nc" id="L16">    private Integer order_id;</span>
+    @XmlElement(name=&quot;datetime&quot;)
+<span class="nc" id="L18">    private String datetime;</span>
+    @XmlElement(name=&quot;total&quot;)
+<span class="nc" id="L20">    private Double total;</span>
+    @XmlElement(name=&quot;item&quot;)
+<span class="fc" id="L22">    private List&lt;OrderInvoiceData&gt; orderInvoiceData;</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
