@@ -1,4 +1,3 @@
-
 function getBrandUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content")
 	return baseUrl + "/api/brand";
@@ -100,8 +99,7 @@ var processCount = 0;
 
 function processData(){
 	var file = $('#brandFile')[0].files[0];
-	readFileData(file, readFileDataCallback);
-	console.log(file);
+	checkHeader(file,["brand","category"],readFileDataCallback);
 }
 
 function readFileDataCallback(results){
@@ -235,4 +233,3 @@ function init(){
 
 $(document).ready(init);
 $(document).ready(getBrandList);
-

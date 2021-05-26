@@ -84,6 +84,14 @@ public class OrderController extends ExceptionHandler{
         return orderDataList;
     }
 
+    //Get single order
+    @ApiOperation(value = "Gets list of Orders")
+    @RequestMapping(path = "/api/singleOrder/{id}", method = RequestMethod.GET)
+    public OrderData getSingleOrder(@PathVariable int id) throws ApiException {
+        OrderPojo orderPojo= orderService.getOrder(id);
+        return DataConversionUtil.convert(orderPojo);
+    }
+
     //Gets list of Order Items of a particular order
     @ApiOperation(value = "Gets list of Order Items of a particular order")
     @RequestMapping(path = "/api/order/{id}", method = RequestMethod.GET)

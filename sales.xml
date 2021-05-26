@@ -3,13 +3,7 @@
     <sales_item>
         <brand>puma</brand>
         <category>shoes</category>
-        <quantity>2</quantity>
-        <revenue>10000.0</revenue>
-    </sales_item>
-    <sales_item>
-        <brand>sleepwell</brand>
-        <category>bed</category>
-        <quantity>4</quantity>
-        <revenue>1200.0</revenue>
+        <quantity>10</quantity>
+        <revenue>450000.0</revenue>
     </sales_item>
 </sales_items>

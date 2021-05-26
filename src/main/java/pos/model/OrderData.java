@@ -6,4 +6,5 @@ import lombok.Data;
 public class OrderData {
     private Integer id;
     private String datetime;
+    private Boolean isInvoiceGenerated;
 }

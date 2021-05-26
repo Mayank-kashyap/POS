@@ -1,32 +1,32 @@
-var orderitemList = [];
+var OrderItemList = [];
 
 function getOrderUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content");
-	console.log(baseUrl);
+
 	return baseUrl + "/api/order";
 }
 
 function getOrderItemUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content");
-	console.log(baseUrl);
+
 	return baseUrl + "/api/order_item";
 }
 
 function getSingleOrderUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content");
-	console.log(baseUrl);
+
 	return baseUrl + "/api/singleOrder";
 }
 
 function getAllOrdersUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content");
-	console.log(baseUrl);
+
 	return baseUrl + "/api/all_orders";
 }
 
 function getInvoiceUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content");
-	console.log(baseUrl);
+
 	return baseUrl + "/api/invoice";
 }
 
@@ -40,35 +40,42 @@ function addOrderItemToList(event) {
 
 		if(ind==-1){
 			if(parseInt(inventoryMap[JSON.parse(json).barcode])>=parseInt(JSON.parse(json).quantity)) {
-				orderitemList.push(JSON.parse(json));
+				OrderItemList.push(JSON.parse(json));
 			}
 			else{
-				toastr.error("The product inventory is: " + inventoryMap[JSON.parse(json).barcode] + "order cannot be placed more than that");
+			if(!inventoryMap[JSON.parse(json).barcode]){
+            					toastr.error("The product's inventory is: " + 0);
+            					}
+            					else
+				toastr.error("The product inventory is: " + inventoryMap[JSON.parse(json).barcode] + " order cannot be placed more than that");
 
 			}
 		}
 		else{
-			var qty = parseInt(orderitemList[ind].quantity) + parseInt(JSON.parse(json).quantity);
+			var qty = parseInt(OrderItemList[ind].quantity) + parseInt(JSON.parse(json).quantity);
 			if(parseInt(inventoryMap[JSON.parse(json).barcode])>=qty){
-				orderitemList[ind].quantity = qty;
+				OrderItemList[ind].quantity = qty;
 			}
 			else{
 				if(!inventoryMap[JSON.parse(json).barcode]){
 					toastr.error("The product's inventory is: " + 0);
 
 				}
-				toastr.error("The product inventory is: " + inventoryMap[JSON.parse(json).barcode] + "Cannot order more than that");
+				toastr.error("The product inventory is: " + inventoryMap[JSON.parse(json).barcode] + " order cannot be placed more than that");
 				}
 		}
 	}
-	console.log(orderitemList);
+	console.log(OrderItemList);
 	getOrderItemList();
 }
 
 function getOrderItemList() {
-	displayOrderItemListFrontend(orderitemList);
+	displayOrderItemListFrontend(OrderItemList);
 }
 
+function getSingleOrder(id){
+
+}
 function addOrderItem(event){
 
 	var $form = $("#orderItem-add-form");
@@ -95,13 +102,13 @@ function addOrderItem(event){
 
 function addOrder(event) {
 
-	if(orderitemList.length == 0) {
+	if(OrderItemList.length == 0) {
 		toastr.error("Add at least one order item");
 		return;
 	}
 
-	var json = JSON.stringify(orderitemList);
-	orderitemList=[];
+	var json = JSON.stringify(OrderItemList);
+	OrderItemList=[];
 	var url = getOrderUrl();
 
 	ajaxQuery(url,'POST',json,function (response) {
@@ -133,7 +140,7 @@ function updateOrder(event){
 	if(check){
 		ajaxQuery(url,'PUT',json,function (response) {
 			getOrderList(response);
-			var orderitem_row = '.orderitemrows' + orderId;
+			var orderitem_row = '.orderItemRows' + orderId;
 		  $(orderitem_row).show();
 		  toastr.options.closeButton=false;
                       toastr.options.timeOut=3000;
@@ -159,7 +166,7 @@ function deleteOrder(id) {
 }
 
 function deleteOrderItem(id) {
-	orderitemList.splice(id,1);
+	OrderItemList.splice(id,1);
 	getOrderItemList();
 }
 
@@ -181,7 +188,7 @@ function getOrderList() {
     	});
 }
 
-function getOrderItemsHtml(id) {
+function getOrderItems(id) {
 	var url = getOrderUrl() + "/" + id;
 	$.ajax({
 		 url: url,
@@ -190,7 +197,7 @@ function getOrderItemsHtml(id) {
 				'Content-Type': 'application/json'
 			 },
 		 success: function(response) {
-				createOrderItemsHtml(response,id);
+				createOrderItems(response,id);
 		 },
 		 error: function(response){
 				handleAjaxError(response);
@@ -232,10 +239,10 @@ function displayOrdersList(data) {
 		+ '<td>'  + e.datetime + '</td>'
 		+ '<td>' + buttonHtml + '</td>'
 		+ '</tr>';
-		orderitemsHtml = '<tr><td colspan="3"><table class="table table-striped orderitemrows' + e.id +'"><tbody></tbody></table><td></tr>';
+		orderitemsHtml = '<tr><td colspan="3"><table class="table table-striped orderItemRows' + e.id +'"><tbody></tbody></table><td></tr>';
         $tbody.append(row);
 		$tbody.append(orderitemsHtml);
-		getOrderItemsHtml(e.id);
+		getOrderItems(e.id);
 	}
 }
 
@@ -272,22 +279,64 @@ function downloadPDF(id) {
 
 function displayOrderItem(data){
 	console.log(data);
-	$("#orderItem-edit-form input[name=barcode]").val(data.barcode);
-	$("#orderItem-edit-form input[name=quantity]").val(data.quantity);
-	$("#orderItem-edit-form input[name=id]").val(data.id);
-	$("#orderItem-edit-form input[name=order-id]").val(data.orderId);
-	$("#orderItem-edit-form input[name=sp]").val(data.sp);
-	$('#edit-orderItem-modal').modal('toggle');
+	var url = getSingleOrderUrl() + "/" + data.orderId;
+        	$.ajax({
+        		 url: url,
+        		 type: 'GET',
+        		 headers: {
+        				'Content-Type': 'application/json'
+        			 },
+        		 success: function(response) {
+        		 console.log(response);
+        				if(response.isInvoiceGenerated)
+        				{
+        				toastr.warning("Invoice already generated");
+        				}
+        				else
+        				{
+        				$("#orderItem-edit-form input[name=barcode]").val(data.barcode);
+                        	$("#orderItem-edit-form input[name=quantity]").val(data.quantity);
+                        	$("#orderItem-edit-form input[name=id]").val(data.id);
+                        	$("#orderItem-edit-form input[name=order-id]").val(data.orderId);
+                        	$("#orderItem-edit-form input[name=sp]").val(data.sp);
+                        	$('#edit-orderItem-modal').modal('toggle');
+        				}
+        		 },
+        		 error: function(response){
+        				handleAjaxError(response);
+        		 }
+        	});
 }
 
 function displayAddOrderItemModal(order_id) {
-	$("#orderItem-add-form input[name=order_id]").val(order_id);
-	$('#add-orderItem-modal').modal('toggle');
+    var url = getSingleOrderUrl() + "/" + order_id;
+    	$.ajax({
+    		 url: url,
+    		 type: 'GET',
+    		 headers: {
+    				'Content-Type': 'application/json'
+    			 },
+    		 success: function(response) {
+    		 console.log(response);
+    				if(response.isInvoiceGenerated)
+    				{
+    				toastr.warning("Invoice already generated");
+    				}
+    				else
+    				{
+    				$("#orderItem-add-form input[name=order_id]").val(order_id);
+                    $('#add-orderItem-modal').modal('toggle');
+    				}
+    		 },
+    		 error: function(response){
+    				handleAjaxError(response);
+    		 }
+    	});
 }
 
-function createOrderItemsHtml(data,id) {
+function createOrderItems(data,id) {
 
-	var table = $('.orderitemrows' + id).find('tbody');
+	var table = $('.orderItemRows' + id).find('tbody');
 	var thHtml = '<tr>';
 	thHtml += '<th scope="col">Barcode</th>';
 	thHtml += '<th scope="col">Quantity</th>';
@@ -310,7 +359,7 @@ function createOrderItemsHtml(data,id) {
 
 function initializeDropdown(id) {
 	console.log("OrderItems List");
-	var orderitem_row = '.orderitemrows' + id;
+	var orderitem_row = '.orderItemRows' + id;
   $(orderitem_row).toggle();
 }
 
@@ -346,8 +395,8 @@ function validateOrderItem(json) {
 }
 
 function checkIfAlreadyPresent(barcode) {
-	for(var i in orderitemList) {
-		var e = orderitemList[i];
+	for(var i in OrderItemList) {
+		var e = OrderItemList[i];
 		if(e.barcode.localeCompare(barcode) == 0){
 			return i;
 		}
@@ -374,28 +423,6 @@ function ajaxQuery(url, type, data, successFunction,errorFunction) {
 	});
 }
 
-function ajaxQueryRecur(url, type, data, successFunction,recurFunction) {
-	$.ajax({
-	   url: url,
-	   type: type,
-	   data: data,
-	   headers: {
-       	'Content-Type': 'application/json'
-       },
-	   success: function(response) {
-	   		successFunction(response);
-	   },
-	   error: function(response){
-			  var error_obj = JSON.parse(response.responseText);
-			  var error = "For " + data;
-				console.log(error_obj.message);
-				error_obj.message = error + " " + error_obj.message;
-				toastr.error(error_obj.message);
-				errorData.push(error_obj);
-				recurFunction();
-	   }
-	});
-}
 
 function isBlank(str) {
     return (!str || /^\s*$/.test(str));

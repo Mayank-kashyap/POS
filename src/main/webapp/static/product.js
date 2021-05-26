@@ -117,7 +117,7 @@ var processCount = 0;
 
 function processData(){
 	var file = $('#productFile')[0].files[0];
-	readFileData(file, readFileDataCallback);
+	checkHeader(file,["brand","category","name","mrp"],readFileDataCallback);
 }
 
 function readFileDataCallback(results){

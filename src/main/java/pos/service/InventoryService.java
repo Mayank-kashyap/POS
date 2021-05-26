@@ -22,22 +22,26 @@ public class InventoryService {
     @Autowired
     private BrandDao brandDao;
 
+    //Adds a product inventory
     @Transactional(rollbackOn = ApiException.class)
     public void add(InventoryPojo inventoryPojo) throws ApiException{
         check(inventoryPojo);
         inventoryDao.insert(inventoryPojo);
     }
 
+    //retrieves a product inventory by id
     @Transactional(rollbackOn = ApiException.class)
     public InventoryPojo get(int id) throws ApiException {
         return getCheck(id);
     }
 
+    //retrieves all product inventories
     @Transactional
     public List<InventoryPojo> getAll() {
         return inventoryDao.selectAll();
     }
 
+    //updates existing inventory
     @Transactional(rollbackOn  = ApiException.class)
     public void update(int id, InventoryPojo inventoryPojo) throws ApiException {
         check(inventoryPojo);
@@ -46,6 +50,7 @@ public class InventoryService {
         inventoryDao.update(id, inventoryPojo1);
     }
 
+    //checks whether inventory exists or not
     @Transactional
     public InventoryPojo getCheck(int id) throws ApiException {
         InventoryPojo inventoryPojo = inventoryDao.select(id);
@@ -55,6 +60,7 @@ public class InventoryService {
         return inventoryPojo;
     }
 
+    //checks whether quantity is positive or not
     @Transactional
     public void check(InventoryPojo inventoryPojo) throws ApiException {
         if(inventoryPojo.getQuantity()<0){
@@ -62,6 +68,7 @@ public class InventoryService {
         }
     }
 
+    //retrieves inventory from product id
     @Transactional
     public InventoryPojo getFromProductId(int productId) throws ApiException {
         InventoryPojo inventoryPojo = inventoryDao.getFromProductId(productId);
@@ -71,6 +78,7 @@ public class InventoryService {
         return inventoryPojo;
     }
 
+    //retrieves brand pojo from inventory pojo
     @Transactional
     public BrandPojo getBrandFromInventory(InventoryPojo inventoryPojo) throws ApiException {
         getCheck(inventoryPojo.getId());

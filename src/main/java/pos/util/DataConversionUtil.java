@@ -110,6 +110,7 @@ public class DataConversionUtil {
         OrderData orderData = new OrderData();
         orderData.setId(orderPojo.getId());
         orderData.setDatetime(orderPojo.getDatetime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        orderData.setIsInvoiceGenerated(orderPojo.getIsInvoiceGenerated());
         return orderData;
     }
 

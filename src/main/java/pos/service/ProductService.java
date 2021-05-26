@@ -25,6 +25,7 @@ public class ProductService {
     @Autowired
     private BrandService brandService;
 
+    //adds a product
     @Transactional(rollbackOn = ApiException.class)
     public void add(ProductPojo productPojo) throws ApiException{
         check(productPojo);
@@ -32,21 +33,26 @@ public class ProductService {
         productDao.insert(productPojo);
     }
 
+    //gets a product by id
     @Transactional(rollbackOn = ApiException.class)
     public ProductPojo get(int id) throws ApiException {
         return getCheck(id);
     }
 
+    //gets product fro barcode
     @Transactional
     public ProductPojo getFromBarcode(String barcode) throws ApiException {
         return checkBarcode(barcode);
     }
+
+    //gets list of all product pojo
     @Transactional
     public List<ProductPojo> getAll() {
         return productDao.selectAll();
     }
 
 
+    //updates product pojo
     @Transactional(rollbackOn  = ApiException.class)
     public void update(int id, ProductPojo productPojo) throws ApiException {
         check(productPojo);
@@ -60,6 +66,7 @@ public class ProductService {
 
 
     //HELPER METHODS
+    //checks whether product pojo is vaid or not
     public void check(ProductPojo productPojo) throws ApiException {
         if(StringUtil.isEmpty(productPojo.getBarcode())) {
             throw new ApiException("Barcode cannot be empty");
@@ -71,6 +78,7 @@ public class ProductService {
             throw new ApiException("Mrp cannot be negative");
     }
 
+    //checks whether barcode is valid
     @Transactional(rollbackOn = ApiException.class)
     public ProductPojo checkBarcode(String barcode) throws ApiException {
         if(barcode==null)
@@ -82,6 +90,7 @@ public class ProductService {
         return productPojo;
     }
 
+    //checks whether product with given id exists
     @Transactional
     public ProductPojo getCheck(int id) throws ApiException {
         ProductPojo productPojo = productDao.select(id);
@@ -91,7 +100,7 @@ public class ProductService {
         return productPojo;
     }
 
-    //maps all the product pojos with their barcode
+    //maps all the product pojo with their barcode
     @Transactional
     public Map<String, ProductPojo> getAllProductPojosByBarcode() {
         List<ProductPojo> productPojoList = getAll();
@@ -102,6 +111,7 @@ public class ProductService {
         return barcodeProduct;
     }
 
+    //normalize product pojo
     @Transactional
     protected static void normalize(ProductPojo productPojo) {
         productPojo.setName(StringUtil.toLowerCase(productPojo.getName()));

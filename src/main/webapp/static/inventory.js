@@ -106,7 +106,7 @@ var processCount = 0;
 
 function processData(){
 	var file = $('#inventoryFile')[0].files[0];
-	readFileData(file, readFileDataCallback);
+	checkHeader(file,["barcode","quantity"],readFileDataCallback);
 }
 
 function readFileDataCallback(results){

@@ -60,9 +60,10 @@ public class OrderService {
         OrderPojo orderPojo=orderDao.select(orderId);
         orderItemPojo.setOrderId(orderPojo.getId());
         List<OrderItemPojo> orderItemPojoList =orderItemDao.getFromOrderId(orderId);
-        for(OrderItemPojo item: orderItemPojoList) {
-            if(productService.get(item.getProductId()).getBarcode().equals(productService.get(orderItemPojo.getProductId()).getBarcode())){
-                update(item.getId(), orderItemPojo);
+        for(OrderItemPojo orderItemPojo1 : orderItemPojoList) {
+            if(productService.get(orderItemPojo1.getProductId()).getBarcode().equals(productService.get(orderItemPojo.getProductId()).getBarcode())){
+                orderItemPojo.setQuantity(orderItemPojo.getQuantity()+orderItemPojo1.getQuantity());
+                update(orderItemPojo1.getId(), orderItemPojo);
                 return;
             }
         }
@@ -70,6 +71,7 @@ public class OrderService {
         orderItemDao.insert(orderItemPojo);
     }
 
+    //get order items for a given order id
     @Transactional
     public List<OrderItemPojo> getOrderItems(int orderId) throws ApiException {
         OrderPojo orderPojo=checkIfExistsOrder(orderId);
@@ -88,6 +90,7 @@ public class OrderService {
         return orderDao.selectAll();
     }
 
+    //get order item by id
     @Transactional
     public OrderItemPojo get(int id) throws ApiException {
         return checkIfExists(id);
@@ -99,8 +102,7 @@ public class OrderService {
         return orderItemDao.selectAll();
     }
 
-
-
+    //update order item
     @Transactional(rollbackFor = ApiException.class)
     public void update(int id, OrderItemPojo orderItemPojo) throws ApiException {
         check(orderItemPojo);
@@ -115,6 +117,15 @@ public class OrderService {
         orderItemPojo1.setSp(orderItemPojo.getSp());
     }
 
+    //update order
+    @Transactional
+    public void update(int id,OrderPojo orderPojo) throws ApiException {
+        checkIfExistsOrder(id);
+        OrderPojo orderPojo1=orderDao.select(id);
+        orderPojo1.setDatetime(orderPojo.getDatetime());
+        orderPojo1.setIsInvoiceGenerated(orderPojo.getIsInvoiceGenerated());
+        orderDao.update(id,orderPojo1);
+    }
 
     //Updates inventory for every added, updated or deleted order
     @Transactional(rollbackFor = ApiException.class)
@@ -147,6 +158,7 @@ public class OrderService {
         }
     }
 
+    //checks whether order item with id exists
     @Transactional(rollbackFor = ApiException.class)
     public OrderItemPojo checkIfExists(int id) throws ApiException {
         OrderItemPojo orderItemPojo = orderItemDao.select(id);
@@ -166,12 +178,14 @@ public class OrderService {
         return orderPojo;
     }
 
+    //gets brand pojo from order item pojo
     @Transactional
     public BrandPojo getBrandFromOrderItem(OrderItemPojo orderItemPojo) throws ApiException {
         ProductPojo productPojo= productService.get(orderItemPojo.getProductId());
         return brandService.get(productPojo.getBrandCategory());
     }
 
+    //gets list of product pojo from order item pojo
     @Transactional
     public Map<OrderItemPojo,ProductPojo> getProductPojos(List<OrderItemPojo> orderItemPojoList) throws ApiException {
         Map<OrderItemPojo,ProductPojo> orderItemPojoProductPojoMap=new HashMap<>();

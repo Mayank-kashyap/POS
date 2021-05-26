@@ -41,6 +41,8 @@ public class ReportController extends ExceptionHandler{
     @ApiOperation(value = "Gets Sales Report")
     @RequestMapping(path = "/api/report/sales", method = RequestMethod.POST)
     public void getSales(@RequestBody ReportFilter reportFilter, HttpServletResponse response) throws Exception {
+        reportFilter.setBrand(reportFilter.getBrand().toLowerCase().trim());
+        reportFilter.setCategory(reportFilter.getCategory().toLowerCase().trim());
         byte[] bytes = reportService.generatePdfResponse("sales", reportFilter);
         createPdfResponse(bytes, response);
     }

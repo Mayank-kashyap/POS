@@ -28,7 +28,6 @@ public class BrandController extends ExceptionHandler{
         brandService.add(brandPojo);
     }
 
-
     //Retrieve a brand using id
     @ApiOperation(value = "Get a brand by Id")
     @RequestMapping(path = "/api/brand/{id}", method = RequestMethod.GET)

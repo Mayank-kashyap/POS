@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <inventory_items>
     <inventory_item>
-        <brand>unclechips</brand>
-        <category>chips</category>
-        <quantity>2546</quantity>
+        <brand>sonata</brand>
+        <category>wrist watch</category>
+        <quantity>8</quantity>
     </inventory_item>
     <inventory_item>
-        <brand>b</brand>
-        <category>bc</category>
-        <quantity>1727</quantity>
+        <brand>american tourister</brand>
+        <category>bag</category>
+        <quantity>8</quantity>
+    </inventory_item>
+    <inventory_item>
+        <brand>puma</brand>
+        <category>shoes</category>
+        <quantity>13</quantity>
+    </inventory_item>
+    <inventory_item>
+        <brand>sleepwell</brand>
+        <category>bed</category>
+        <quantity>10</quantity>
+    </inventory_item>
+    <inventory_item>
+        <brand>bata</brand>
+        <category>shoes</category>
+        <quantity>50</quantity>
     </inventory_item>
 </inventory_items>
