@@ -30,30 +30,39 @@ import java.util.List;
 <span class="nc" id="L30">        brandService.add(brandPojo);</span>
 <span class="nc" id="L31">    }</span>
 
+    @ApiOperation(value = &quot;Adds a brand&quot;)
+    @RequestMapping(path = &quot;/api/brand/list&quot;, method = RequestMethod.POST)
+    public void add(@RequestBody List&lt;BrandForm&gt; brandForm) throws ApiException {
+<span class="nc" id="L36">        List&lt;BrandPojo&gt; brandPojoList=new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        for(BrandForm brandForm1:brandForm) {</span>
+<span class="nc" id="L38">            BrandPojo brandPojo = DataConversionUtil.convert(brandForm1);</span>
+<span class="nc" id="L39">            brandPojoList.add(brandPojo);</span>
+<span class="nc" id="L40">        }</span>
+<span class="nc" id="L41">        brandService.addList(brandPojoList);</span>
+<span class="nc" id="L42">    }</span>
 
     //Retrieve a brand using id
     @ApiOperation(value = &quot;Get a brand by Id&quot;)
     @RequestMapping(path = &quot;/api/brand/{id}&quot;, method = RequestMethod.GET)
     public BrandData get(@PathVariable int id) throws ApiException {
-<span class="nc" id="L38">        BrandPojo brandPojo = brandService.get(id);</span>
-<span class="nc" id="L39">        return DataConversionUtil.convert(brandPojo);</span>
+<span class="nc" id="L48">        BrandPojo brandPojo = brandService.get(id);</span>
+<span class="nc" id="L49">        return DataConversionUtil.convert(brandPojo);</span>
     }
 
     //Retrieve complete list of all brands
     @ApiOperation(value = &quot;Get list of all brands&quot;)
     @RequestMapping(path = &quot;/api/brand&quot;, method = RequestMethod.GET)
     public List&lt;BrandData&gt; getAll(){
-<span class="nc" id="L46">        List&lt;BrandPojo&gt; brandPojoList = brandService.getAll();</span>
-<span class="nc" id="L47">        List&lt;BrandData&gt; brandDataList = DataConversionUtil.convert(brandPojoList);</span>
-<span class="nc" id="L48">        return brandDataList;</span>
+<span class="nc" id="L56">        List&lt;BrandPojo&gt; brandPojoList = brandService.getAll();</span>
+<span class="nc" id="L57">        return DataConversionUtil.convert(brandPojoList);</span>
     }
 
     //Updates a brand
     @ApiOperation(value = &quot;Updates a brand&quot;)
     @RequestMapping(path = &quot;/api/brand/{id}&quot;, method = RequestMethod.PUT)
     public void update(@PathVariable int id, @RequestBody BrandForm brandForm) throws ApiException {
-<span class="nc" id="L55">        BrandPojo brandPojo = DataConversionUtil.convert(brandForm);</span>
-<span class="nc" id="L56">        brandService.update(id, brandPojo);</span>
-<span class="nc" id="L57">    }</span>
+<span class="nc" id="L64">        BrandPojo brandPojo = DataConversionUtil.convert(brandForm);</span>
+<span class="nc" id="L65">        brandService.update(id, brandPojo);</span>
+<span class="nc" id="L66">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

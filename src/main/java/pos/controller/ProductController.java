@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pos.model.BrandForm;
 import pos.model.ProductData;
 import pos.model.ProductForm;
 import pos.pojo.BrandPojo;
@@ -36,6 +37,19 @@ public class ProductController extends ExceptionHandler{
         productForm.setCategory(productForm.getCategory().toLowerCase().trim());
         BrandPojo brandPojo=brandService.getBrandPojo(productForm.getBrand(), productForm.getCategory());
         productService.add(DataConversionUtil.convert(productForm,brandPojo));
+    }
+
+    @ApiOperation(value = "Adds products")
+    @RequestMapping(path = "/api/product/list", method = RequestMethod.POST)
+    public void add(@RequestBody List<ProductForm> productFormList) throws ApiException {
+        List<ProductPojo> productPojoList=new ArrayList<>();
+        for(ProductForm productForm:productFormList) {
+            productForm.setBrand(productForm.getBrand().toLowerCase().trim());
+            productForm.setCategory(productForm.getCategory().toLowerCase().trim());
+            BrandPojo brandPojo=brandService.getBrandPojo(productForm.getBrand(), productForm.getCategory());
+            productPojoList.add(DataConversionUtil.convert(productForm,brandPojo));
+        }
+        productService.addList(productPojoList);
     }
 
     //Retrieves a product by productId

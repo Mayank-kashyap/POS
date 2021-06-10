@@ -2,12 +2,14 @@ package pos.dao;
 
 import org.springframework.stereotype.Repository;
 import pos.pojo.BrandPojo;
+import pos.pojo.OrderItemPojo;
 import pos.pojo.OrderPojo;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 //Repository for order
@@ -45,6 +47,15 @@ public class OrderDao extends AbstractDao{
     public List<OrderPojo> selectAll() {
         String select_all = "select p from OrderPojo p";
         TypedQuery<OrderPojo> query = getQuery(select_all,OrderPojo.class);
+        return query.getResultList();
+    }
+
+    @Transactional
+    public List<OrderPojo> getByDate(LocalDateTime startDate, LocalDateTime endDate){
+        String selectByDate = "select p from OrderPojo p where datetime between :startDate and :endDate";
+        TypedQuery<OrderPojo> query = getQuery(selectByDate,  OrderPojo.class);
+        query.setParameter("startDate",startDate);
+        query.setParameter("endDate",endDate);
         return query.getResultList();
     }
 }

@@ -2,7 +2,6 @@ package pos.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import pos.pojo.BrandPojo;
 import pos.pojo.ProductPojo;
 
@@ -13,35 +12,37 @@ import static org.junit.Assert.fail;
 
 public class ProductServiceTest extends AbstractUnitTest{
 
+    //declaration of all pojo beforehand
     @Before
     public void Declaration() throws ApiException {
         declare();
     }
-    /* Testing adding of product details pojo */
+
+    // Testing adding of product
     @Test
     public void testAdd() throws ApiException {
 
-        BrandPojo b = brandPojoList.get(0);
-        ProductPojo p = getProductDetailsPojo(b);
-        List<ProductPojo> product_list_before = productService.getAll();
-        productService.add(p);
-        List<ProductPojo> product_list_after = productService.getAll();
-        assertEquals(product_list_before.size() + 1, product_list_after.size());
-        assertEquals(p.getBarcode(), productService.get(p.getId()).getBarcode());
-        assertEquals(p.getName(), productService.get(p.getId()).getName());
-        assertEquals(p.getMrp(), productService.get(p.getId()).getMrp(), 0.001);
-        assertEquals(p.getBrandCategory(), productService.get(p.getId()).getBrandCategory());
+        BrandPojo brandPojo = brandPojoList.get(0);
+        ProductPojo productPojo = getProductDetailsPojo(brandPojo);
+        List<ProductPojo> productPojoList = productService.getAll();
+        productService.add(productPojo);
+        List<ProductPojo> productPojoList1 = productService.getAll();
+        assertEquals(productPojoList.size() + 1, productPojoList1.size());
+        assertEquals(productPojo.getBarcode(), productService.get(productPojo.getId()).getBarcode());
+        assertEquals(productPojo.getName(), productService.get(productPojo.getId()).getName());
+        assertEquals(productPojo.getMrp(), productService.get(productPojo.getId()).getMrp(), 0.001);
+        assertEquals(productPojo.getBrandCategory(), productService.get(productPojo.getId()).getBrandCategory());
 
     }
 
-    /* Testing adding of an invalid pojo. Should throw an exception */
+    // Testing adding of an invalid pojo. Should throw an exception
     @Test()
-    public void testAddWrong() throws ApiException {
+    public void testAddWrong() {
 
-        BrandPojo b = brandPojoList.get(0);
-        ProductPojo p = getWrongProductDetailsPojo(b);
+        BrandPojo brandPojo = brandPojoList.get(0);
+        ProductPojo productPojo = getWrongProductDetailsPojo(brandPojo);
         try {
-            productService.add(p);
+            productService.add(productPojo);
             fail("ApiException did not occur");
         } catch (ApiException e) {
             assertEquals(e.getMessage(), "Barcode cannot be empty");
@@ -50,21 +51,21 @@ public class ProductServiceTest extends AbstractUnitTest{
     }
 
 
-    /* Testing get by id */
+    // Testing get by id
     @Test()
     public void testGetById() throws ApiException {
 
-        ProductPojo db_product_pojo = productService.get(productPojoList.get(0).getId());
-        assertEquals(productPojoList.get(0).getBarcode(), db_product_pojo.getBarcode());
-        assertEquals(productPojoList.get(0).getBrandCategory(), db_product_pojo.getBrandCategory());
-        assertEquals(productPojoList.get(0).getMrp(), db_product_pojo.getMrp(), 0.001);
-        assertEquals(productPojoList.get(0).getName(), db_product_pojo.getName());
+        ProductPojo productPojo = productService.get(productPojoList.get(0).getId());
+        assertEquals(productPojoList.get(0).getBarcode(), productPojo.getBarcode());
+        assertEquals(productPojoList.get(0).getBrandCategory(), productPojo.getBrandCategory());
+        assertEquals(productPojoList.get(0).getMrp(), productPojo.getMrp(), 0.001);
+        assertEquals(productPojoList.get(0).getName(), productPojo.getName());
 
     }
 
-    /* Testing get by id for a non-existent pojo. Should throw an exception */
+    // Testing get by id for a non-existent pojo. Should throw an exception
     @Test()
-    public void testGetByIdNotExisting() throws ApiException {
+    public void testGetByIdNotExisting() {
         try {
             productService.get(100);
             fail("ApiException did not occur");
@@ -74,21 +75,23 @@ public class ProductServiceTest extends AbstractUnitTest{
 
     }
 
-    private ProductPojo getProductDetailsPojo(BrandPojo b) throws ApiException {
-        ProductPojo p = new ProductPojo();
-        p.setBrandCategory(b.getId());
-        p.setName("Milk");
-        p.setMrp(50.0);
-        p.setBarcode("1Milk1");
-        return p;
+    //returns new product pojo
+    private ProductPojo getProductDetailsPojo(BrandPojo brandPojo) {
+        ProductPojo productPojo = new ProductPojo();
+        productPojo.setBrandCategory(brandPojo.getId());
+        productPojo.setName("Milk");
+        productPojo.setMrp(50.0);
+        productPojo.setBarcode("1Milk1");
+        return productPojo;
     }
 
-    private ProductPojo getWrongProductDetailsPojo(BrandPojo b) throws ApiException {
-        ProductPojo p = new ProductPojo();
-        p.setBrandCategory(b.getId());
-        p.setName("");
-        p.setMrp(-5.0);
-        p.setBarcode("");
-        return p;
+    //returns new product pojo with invalid entry
+    private ProductPojo getWrongProductDetailsPojo(BrandPojo brandPojo) {
+        ProductPojo productPojo = new ProductPojo();
+        productPojo.setBrandCategory(brandPojo.getId());
+        productPojo.setName("");
+        productPojo.setMrp(-5.0);
+        productPojo.setBarcode("");
+        return productPojo;
     }
 }

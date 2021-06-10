@@ -3,76 +3,86 @@
     <brand_item>
         <brand>adidas</brand>
         <category>shoes</category>
-        <id>2</id>
+        <id>5</id>
     </brand_item>
     <brand_item>
-        <brand>american tourister</brand>
-        <category>bag</category>
-        <id>4</id>
+        <brand>cisca</brand>
+        <category>led</category>
+        <id>6</id>
     </brand_item>
     <brand_item>
-        <brand>american tourister</brand>
-        <category>bags</category>
-        <id>9</id>
-    </brand_item>
-    <brand_item>
-        <brand>anchor</brand>
-        <category>electrical appliances</category>
-        <id>12</id>
-    </brand_item>
-    <brand_item>
-        <brand>bata</brand>
-        <category>shoes</category>
-        <id>3</id>
-    </brand_item>
-    <brand_item>
-        <brand>beardo</brand>
-        <category>cosmetics</category>
-        <id>13</id>
-    </brand_item>
-    <brand_item>
-        <brand>classmate</brand>
-        <category>copies</category>
-        <id>14</id>
+        <brand>coca cola</brand>
+        <category>bevrages</category>
+        <id>11</id>
     </brand_item>
     <brand_item>
         <brand>crompton</brand>
         <category>geyser</category>
-        <id>6</id>
+        <id>3</id>
     </brand_item>
     <brand_item>
         <brand>dell</brand>
         <category>pc</category>
-        <id>8</id>
+        <id>2</id>
     </brand_item>
     <brand_item>
-        <brand>kellog</brand>
-        <category>chocos</category>
-        <id>15</id>
+        <brand>fast track</brand>
+        <category>watches</category>
+        <id>14</id>
     </brand_item>
     <brand_item>
-        <brand>lenovo</brand>
-        <category>laptop</category>
-        <id>10</id>
+        <brand>gucci</brand>
+        <category>clothes</category>
+        <id>16</id>
+    </brand_item>
+    <brand_item>
+        <brand>havells</brand>
+        <category>fans</category>
+        <id>13</id>
     </brand_item>
     <brand_item>
         <brand>milton</brand>
-        <category>bottles</category>
-        <id>11</id>
+        <category>water bottle</category>
+        <id>7</id>
+    </brand_item>
+    <brand_item>
+        <brand>milton</brand>
+        <category>water bottles</category>
+        <id>8</id>
     </brand_item>
     <brand_item>
         <brand>puma</brand>
         <category>shoes</category>
-        <id>1</id>
+        <id>12</id>
+    </brand_item>
+    <brand_item>
+        <brand>samsung</brand>
+        <category>mobile</category>
+        <id>9</id>
+    </brand_item>
+    <brand_item>
+        <brand>samsung</brand>
+        <category>tv</category>
+        <id>10</id>
     </brand_item>
     <brand_item>
         <brand>sleepwell</brand>
         <category>bed</category>
-        <id>7</id>
+        <id>4</id>
     </brand_item>
     <brand_item>
         <brand>sonata</brand>
         <category>wrist watch</category>
-        <id>5</id>
+        <id>1</id>
+    </brand_item>
+    <brand_item>
+        <brand>sprite</brand>
+        <category>soft drink</category>
+        <id>17</id>
+    </brand_item>
+    <brand_item>
+        <brand>versache</brand>
+        <category>clothes</category>
+        <id>15</id>
     </brand_item>
 </brands>

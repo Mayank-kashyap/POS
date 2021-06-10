@@ -154,7 +154,6 @@ public class DataConversionUtil {
         List<OrderInvoiceData> orderInvoiceDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             OrderInvoiceData orderInvoiceData = new OrderInvoiceData();
-            orderInvoiceData.setId(orderItemPojo.getId());
             orderInvoiceData.setMrp(orderItemPojo.getSp());
             orderInvoiceData.setName(productPojoList.get(orderItemPojo).getName());
             orderInvoiceData.setQuantity(orderItemPojo.getQuantity());

@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pos.model.BrandForm;
 import pos.model.ProductData;
 import pos.model.ProductForm;
 import pos.pojo.BrandPojo;
@@ -16,7 +17,6 @@ import pos.util.DataConversionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 //Controls the products page of the application
 @Api
@@ -39,37 +39,50 @@ import java.util.Locale;
 <span class="nc" id="L39">        productService.add(DataConversionUtil.convert(productForm,brandPojo));</span>
 <span class="nc" id="L40">    }</span>
 
+    @ApiOperation(value = &quot;Adds products&quot;)
+    @RequestMapping(path = &quot;/api/product/list&quot;, method = RequestMethod.POST)
+    public void add(@RequestBody List&lt;ProductForm&gt; productFormList) throws ApiException {
+<span class="nc" id="L45">        List&lt;ProductPojo&gt; productPojoList=new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        for(ProductForm productForm:productFormList) {</span>
+<span class="nc" id="L47">            productForm.setBrand(productForm.getBrand().toLowerCase().trim());</span>
+<span class="nc" id="L48">            productForm.setCategory(productForm.getCategory().toLowerCase().trim());</span>
+<span class="nc" id="L49">            BrandPojo brandPojo=brandService.getBrandPojo(productForm.getBrand(), productForm.getCategory());</span>
+<span class="nc" id="L50">            productPojoList.add(DataConversionUtil.convert(productForm,brandPojo));</span>
+<span class="nc" id="L51">        }</span>
+<span class="nc" id="L52">        productService.addList(productPojoList);</span>
+<span class="nc" id="L53">    }</span>
+
     //Retrieves a product by productId
     @ApiOperation(value = &quot;Get a product by Id&quot;)
     @RequestMapping(path = &quot;/api/product/{id}&quot;, method = RequestMethod.GET)
     public ProductData get(@PathVariable int id) throws ApiException {
-<span class="nc" id="L46">        ProductPojo productPojo = productService.get(id);</span>
-<span class="nc" id="L47">        BrandPojo brandPojo= brandService.get(productPojo.getBrandCategory());</span>
-<span class="nc" id="L48">        return DataConversionUtil.convert(productPojo,brandPojo);</span>
+<span class="nc" id="L59">        ProductPojo productPojo = productService.get(id);</span>
+<span class="nc" id="L60">        BrandPojo brandPojo= brandService.get(productPojo.getBrandCategory());</span>
+<span class="nc" id="L61">        return DataConversionUtil.convert(productPojo,brandPojo);</span>
     }
 
     //Retrieves list of all products
     @ApiOperation(value = &quot;Get list of all products&quot;)
     @RequestMapping(path = &quot;/api/product&quot;, method = RequestMethod.GET)
     public List&lt;ProductData&gt; getAll() throws ApiException {
-<span class="nc" id="L55">        List&lt;ProductPojo&gt; productPojoList = productService.getAll();</span>
-<span class="nc" id="L56">        List&lt;ProductData&gt; productDataList = new ArrayList&lt;ProductData&gt;();</span>
-<span class="nc bnc" id="L57" title="All 2 branches missed.">        for (ProductPojo productPojo : productPojoList){</span>
-<span class="nc" id="L58">            BrandPojo brandPojo= brandService.get(productPojo.getBrandCategory());</span>
-<span class="nc" id="L59">            productDataList.add(DataConversionUtil.convert(productPojo,brandPojo));</span>
-<span class="nc" id="L60">        }</span>
-<span class="nc" id="L61">        return productDataList;</span>
+<span class="nc" id="L68">        List&lt;ProductPojo&gt; productPojoList = productService.getAll();</span>
+<span class="nc" id="L69">        List&lt;ProductData&gt; productDataList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        for (ProductPojo productPojo : productPojoList){</span>
+<span class="nc" id="L71">            BrandPojo brandPojo= brandService.get(productPojo.getBrandCategory());</span>
+<span class="nc" id="L72">            productDataList.add(DataConversionUtil.convert(productPojo,brandPojo));</span>
+<span class="nc" id="L73">        }</span>
+<span class="nc" id="L74">        return productDataList;</span>
     }
 
     //Updates a product
     @ApiOperation(value = &quot;Updates a product&quot;)
     @RequestMapping(path = &quot;/api/product/{id}&quot;, method = RequestMethod.PUT)
     public void update(@PathVariable int id, @RequestBody ProductForm productForm) throws ApiException {
-<span class="nc" id="L68">        ProductPojo productPojo= productService.get(id);</span>
-<span class="nc" id="L69">        productForm.setBrand(brandService.get(productPojo.getBrandCategory()).getBrand());</span>
-<span class="nc" id="L70">        productForm.setCategory(brandService.get(productPojo.getBrandCategory()).getCategory());</span>
-<span class="nc" id="L71">        BrandPojo brandPojo=brandService.getBrandPojo(productForm.getBrand(), productForm.getCategory());</span>
-<span class="nc" id="L72">        productService.update(id, DataConversionUtil.convert(productForm,brandPojo));</span>
-<span class="nc" id="L73">    }</span>
+<span class="nc" id="L81">        ProductPojo productPojo= productService.get(id);</span>
+<span class="nc" id="L82">        productForm.setBrand(brandService.get(productPojo.getBrandCategory()).getBrand());</span>
+<span class="nc" id="L83">        productForm.setCategory(brandService.get(productPojo.getBrandCategory()).getCategory());</span>
+<span class="nc" id="L84">        BrandPojo brandPojo=brandService.getBrandPojo(productForm.getBrand(), productForm.getCategory());</span>
+<span class="nc" id="L85">        productService.update(id, DataConversionUtil.convert(productForm,brandPojo));</span>
+<span class="nc" id="L86">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

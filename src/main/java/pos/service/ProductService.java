@@ -2,8 +2,6 @@ package pos.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pos.dao.BrandDao;
-import pos.dao.InventoryDao;
 import pos.dao.ProductDao;
 import pos.pojo.ProductPojo;
 import pos.util.StringUtil;
@@ -18,21 +16,30 @@ public class ProductService {
 
     @Autowired
     private ProductDao productDao;
-    @Autowired
-    private BrandDao brandDao;
-    @Autowired
-    private InventoryDao inventoryDao;
-    @Autowired
-    private BrandService brandService;
 
     //adds a product
     @Transactional(rollbackOn = ApiException.class)
     public void add(ProductPojo productPojo) throws ApiException{
-        check(productPojo);
         normalize(productPojo);
+        check(productPojo);
+        ProductPojo productPojo1= productDao.getIdFromBarcode(productPojo.getBarcode());
+        if(productPojo1!=null) {
+            throw new ApiException("Product with given barcode already exists: " + productPojo.getBarcode());
+        }
+        productPojo.setMrp(Math.round(productPojo.getMrp()*100.0)/100.0);
         productDao.insert(productPojo);
     }
 
+    @Transactional(rollbackOn = ApiException.class)
+    public void addList(List<ProductPojo> productPojoList) throws ApiException {
+        for (ProductPojo productPojo:productPojoList){
+            normalize(productPojo);
+            check(productPojo);
+        }
+        for (ProductPojo productPojo:productPojoList){
+            add(productPojo);
+        }
+    }
     //gets a product by id
     @Transactional(rollbackOn = ApiException.class)
     public ProductPojo get(int id) throws ApiException {
@@ -60,13 +67,13 @@ public class ProductService {
         ProductPojo productPojo1 = getCheck(id);
         productPojo1.setBarcode(productPojo.getBarcode());
         productPojo1.setName(productPojo.getName());
-        productPojo1.setMrp(productPojo.getMrp());
+        productPojo1.setMrp(Math.round(productPojo.getMrp()*100.0)/100.0);
         productDao.update(id, productPojo1);
     }
 
 
     //HELPER METHODS
-    //checks whether product pojo is vaid or not
+    //checks whether product pojo is valid or not
     public void check(ProductPojo productPojo) throws ApiException {
         if(StringUtil.isEmpty(productPojo.getBarcode())) {
             throw new ApiException("Barcode cannot be empty");
@@ -75,7 +82,8 @@ public class ProductService {
             throw new ApiException("Name cannot be empty");
         }
         if(productPojo.getMrp()<=0)
-            throw new ApiException("Mrp cannot be negative");
+            throw new ApiException("Mrp cannot be negative or zero");
+
     }
 
     //checks whether barcode is valid
@@ -85,7 +93,7 @@ public class ProductService {
             throw new ApiException("Barcode cannot be empty");
         ProductPojo productPojo= productDao.getIdFromBarcode(barcode);
         if(productPojo==null){
-            throw new ApiException("Product with given barcode does not exist");
+            throw new ApiException("Product with given barcode does not exist: "+ barcode);
         }
         return productPojo;
     }
@@ -104,7 +112,7 @@ public class ProductService {
     @Transactional
     public Map<String, ProductPojo> getAllProductPojosByBarcode() {
         List<ProductPojo> productPojoList = getAll();
-        Map<String, ProductPojo> barcodeProduct = new HashMap<String, ProductPojo>();
+        Map<String, ProductPojo> barcodeProduct = new HashMap<>();
         for (ProductPojo productPojo : productPojoList) {
             barcodeProduct.put(productPojo.getBarcode(), productPojo);
         }

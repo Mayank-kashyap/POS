@@ -1,14 +1,13 @@
 package pos.service;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import pos.pojo.BrandPojo;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class BrandServiceTest extends AbstractUnitTest{
 
+    //test the addition of a brand
     @Test
     public void testAdd() throws ApiException {
         BrandPojo brandPojo = new BrandPojo();
@@ -20,14 +19,16 @@ public class BrandServiceTest extends AbstractUnitTest{
         assertEquals(brandPojo1.getCategory(),brandPojo1.getCategory());
     }
 
+    //test the exception thrown is correct or not
     @Test(expected = ApiException.class)
     public void testInvalid() throws ApiException{
-        BrandPojo p = new BrandPojo();
-        p.setBrand("");
-        p.setCategory("");
-        brandService.add(p);
+        BrandPojo brandPojo = new BrandPojo();
+        brandPojo.setBrand("");
+        brandPojo.setCategory("");
+        brandService.add(brandPojo);
     }
 
+    //test the normalization function
     @Test
     public void testNormalize() {
         BrandPojo brandPojo = new BrandPojo();

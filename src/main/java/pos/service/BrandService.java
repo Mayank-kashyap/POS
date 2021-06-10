@@ -19,11 +19,22 @@ public class BrandService {
     //Add a brand
     @Transactional(rollbackOn = ApiException.class)
     public void add(BrandPojo brandPojo) throws ApiException{
-        check(brandPojo);
+
         normalize(brandPojo);
+        check(brandPojo);
         brandDao.insert(brandPojo);
     }
 
+    @Transactional(rollbackOn = ApiException.class)
+    public void addList(List<BrandPojo> brandPojoList) throws ApiException {
+        for (BrandPojo brandPojo: brandPojoList){
+            normalize(brandPojo);
+            check(brandPojo);
+        }
+        for (BrandPojo brandPojo: brandPojoList){
+            add(brandPojo);
+        }
+    }
     //get a brand by id
     @Transactional(rollbackOn = ApiException.class)
     public BrandPojo get(int id) throws ApiException {
@@ -69,7 +80,7 @@ public class BrandService {
         }
         List<BrandPojo> brandPojoList = brandDao.getIdFromBrandCategory(brandPojo.getBrand(),brandPojo.getCategory());
         if(!brandPojoList.isEmpty()) {
-            throw new ApiException("Brand and Category already exist");
+            throw new ApiException("Brand and Category already exist: "+brandPojo.getBrand()+" "+brandPojo.getCategory());
         }
     }
 

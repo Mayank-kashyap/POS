@@ -4,6 +4,10 @@ function getInventoryUrl(){
 	return baseUrl + "/api/inventory";
 }
 
+function getInventoryListUrl(){
+	var baseUrl = $("meta[name=baseUrl]").attr("content")
+	return baseUrl + "/api/inventory/list";
+}
 //BUTTON ACTIONS
 function addInventory(event){
 	//Set the values to update
@@ -26,7 +30,7 @@ function addInventory(event){
             toastr.options.timeOut=3000;
             toastr.success("Product Inventory added successfully");
             toastr.options.closeButton=true;
-            toastr.options.timeOut=none;
+            toastr.options.timeOut=0;
 	   },
 	   error: handleAjaxError
 	});
@@ -61,7 +65,7 @@ function updateInventory(event){
             toastr.options.timeOut=3000;
 	   		toastr.success("Product inventory updated successfully");
 	   		toastr.options.closeButton=true;
-            toastr.options.timeOut=none;
+            toastr.options.timeOut=0;
 	   },
 	   error: handleAjaxError
 	});
@@ -81,16 +85,44 @@ function getInventoryList(){
 	});
 }
 
+function validateInventoryUpload(arr) {
+	for(var i in arr){
+	var json=arr[i];
+	    if(isBlank(json.barcode)) {
+        		toastr.error("Barcode field must not be empty");
+        		return false;
+        	}
+        	if(isBlank(json.quantity)) {
+        		toastr.error("Quantity field must not be empty");
+        		return false;
+        	}
+        	else if(isNaN(parseInt(json.quantity)) || !isInt(json.quantity)){
+        	    toastr.error("Quantity field must be an integer value: "+ json.quantity);
+                        		return false;
+        	}
+        	if(parseInt(json.quantity)<=0){
+            	toastr.error("Quantity must be positive");
+                return false;
+            	}
+	}
+
+	return true;
+}
+
 function validateInventory(json) {
 	json = JSON.parse(json);
 	if(isBlank(json.barcode)) {
 		toastr.error("Barcode field must not be empty");
 		return false;
 	}
-	if(isBlank(json.quantity) || isNaN(parseInt(json.quantity)) || !isInt(json.quantity)) {
-		toastr.error("Quantity field must not be empty and must be an integer value");
-		return false;
-	}
+	if(isBlank(json.quantity)) {
+            		toastr.error("Quantity field must not be empty");
+            		return false;
+            	}
+            	else if(isNaN(parseInt(json.quantity)) || !isInt(json.quantity)){
+            	    toastr.error("Quantity field must be an integer value: "+ json.quantity);
+                            		return false;
+            	}
 
 	if(parseInt(json.quantity)<=0){
     	toastr.error("Quantity must be positive");
@@ -117,36 +149,37 @@ function readFileDataCallback(results){
 function uploadRows(){
 	//Update progress
 	updateUploadDialog();
-	//If everything processed then return
-	if(processCount==fileData.length){
-		return;
-	}
-
-	//Process next row
-	var row = fileData[processCount];
-	processCount++;
-
-	var json = JSON.stringify(row);
-	var url = getInventoryUrl();
-
-	//Make ajax call
-	$.ajax({
-	   url: url,
-	   type: 'POST',
-	   data: json,
-	   headers: {
-       	'Content-Type': 'application/json'
-       },
-	   success: function(response) {
-	   		uploadRows();
-	   },
-	   error: function(response){
-	   		row.error=response.responseText
-	   		errorData.push(row);
-	   		uploadRows();
-	   }
-	});
-
+	var row = fileData;
+	var check=validateInventoryUpload(row);
+            	var json = JSON.stringify(row);
+            	var url = getInventoryListUrl();
+    if(check)
+    {
+        //Make ajax call
+        	$.ajax({
+        	   url: url,
+        	   type: 'POST',
+        	   data: json,
+        	   headers: {
+               	'Content-Type': 'application/json'
+               },
+        	   success: function(response) {
+        	   		console.log(response);
+        	   		getInventoryList();
+        	   		$('#upload-inventory-modal').modal('hide');
+                    	   		toastr.options.closeButton=false;
+                                    	   		toastr.options.timeOut=3000;
+                                    	   		toastr.success("File uploaded successfully");
+                                    	   		toastr.options.closeButton=true;
+                                                toastr.options.timeOut=0;
+        	   },
+        	   error: function(response){
+        	   		console.log(response);
+                    toastr.error("File cannot be uploaded: "+JSON.parse(response.responseText).message);
+        	   }
+        	});
+    }
+	return false;
 }
 
 function downloadErrors(){
@@ -196,8 +229,6 @@ function resetUploadDialog(){
 
 function updateUploadDialog(){
 	$('#rowCount').html("" + fileData.length);
-	$('#processCount').html("" + processCount);
-	$('#errorCount').html("" + errorData.length);
 }
 
 function updateFileName(){
@@ -226,9 +257,10 @@ function init(){
 	$('#submit-inventory').click(addInventory);
 	$('#update-inventory').click(updateInventory);
 	$('#refresh-data').click(getInventoryList);
+	$('#close-upload').click(getInventoryList);
 	$('#upload-data').click(displayUploadData);
 	$('#process-data').click(processData);
-	$('#download-errors').click(downloadErrors);
+
     $('#inventoryFile').on('change', updateFileName)
 }
 

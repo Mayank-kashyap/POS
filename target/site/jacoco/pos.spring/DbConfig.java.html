@@ -65,17 +65,16 @@ import java.util.Properties;
 <span class="fc" id="L65">        jpaProperties.put(&quot;hibernate.dialect&quot;, hibernateDialect);</span>
 <span class="fc" id="L66">        jpaProperties.put(&quot;hibernate.show_sql&quot;, hibernateShowSql);</span>
 <span class="fc" id="L67">        jpaProperties.put(&quot;hibernate.hbm2ddl.auto&quot;, hibernateHbm2ddl);</span>
-<span class="fc" id="L68">        jpaProperties.put(&quot;hibernate.hbm2ddl.auto&quot;, hibernateHbm2ddl);</span>
-<span class="fc" id="L69">        bean.setJpaProperties(jpaProperties);</span>
-<span class="fc" id="L70">        return bean;</span>
+<span class="fc" id="L68">        bean.setJpaProperties(jpaProperties);</span>
+<span class="fc" id="L69">        return bean;</span>
     }
 
     @Bean(name = &quot;transactionManager&quot;)
     @Autowired
     public JpaTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean emf) {
-<span class="fc" id="L76">        JpaTransactionManager bean = new JpaTransactionManager();</span>
-<span class="fc" id="L77">        bean.setEntityManagerFactory(emf.getObject());</span>
-<span class="fc" id="L78">        return bean;</span>
+<span class="fc" id="L75">        JpaTransactionManager bean = new JpaTransactionManager();</span>
+<span class="fc" id="L76">        bean.setEntityManagerFactory(emf.getObject());</span>
+<span class="fc" id="L77">        return bean;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,8 +1,12 @@
-
-//Gets the url of brand page
 function getBrandUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content")
 	return baseUrl + "/api/brand";
+}
+
+function getBrandUrlList(){
+	var baseUrl = $("meta[name=baseUrl]").attr("content");
+	console.log(baseUrl);
+	return baseUrl + "/api/brand/list";
 }
 
 //BUTTON ACTIONS
@@ -25,7 +29,11 @@ function addBrand(event){
     	   success: function(response) {
     	   		getBrandList();
     	   		$('#add-brand-modal').modal('hide');
+    	   		toastr.options.closeButton=false;
+    	   		toastr.options.timeOut=3000;
     	   		toastr.success("Brand added successfully");
+    	   		toastr.options.closeButton=true;
+                toastr.options.timeOut=0;
     	   },
     	   error: handleAjaxError
     	});
@@ -53,7 +61,11 @@ function updateBrand(event){
        },
 	   success: function(response) {
 	   		getBrandList();
+	   		toastr.options.closeButton=false;
+            toastr.options.timeOut=3000;
             toastr.success("Brand updated successfully");
+            toastr.options.closeButton=true;
+            toastr.options.timeOut=0;
 	   },
 	   error: handleAjaxError
 	});
@@ -93,8 +105,7 @@ var processCount = 0;
 
 function processData(){
 	var file = $('#brandFile')[0].files[0];
-	readFileData(file, readFileDataCallback);
-	console.log(file);
+	checkHeader(file,["brand","category"],readFileDataCallback);
 }
 
 function readFileDataCallback(results){
@@ -105,37 +116,32 @@ function readFileDataCallback(results){
 function uploadRows(){
 	//Update progress
 	updateUploadDialog();
-	//If everything processed then return
-	if(processCount==fileData.length){
-		return;
-	}
+	var row = fileData;
+    	var json = JSON.stringify(row);
+    	var url = getBrandUrlList();
+    	//Make ajax call
+    	$.ajax({
+    	   url: url,
+    	   type: 'POST',
+    	   data: json,
+    	   headers: {
+           	'Content-Type': 'application/json'
+           },
+    	   success: function(response) {
+    	   		console.log(response);
 
-	//Process next row
-	var row = fileData[processCount];
-	processCount++;
+    	   		toastr.options.closeButton=false;
+                    	   		toastr.options.timeOut=3000;
+                    	   		toastr.success("File uploaded successfully");
+                    	   		toastr.options.closeButton=true;
+                                toastr.options.timeOut=0;
+    	   		},
+    	   error: function(response){
+                console.log(response);
+                toastr.error("File cannot be uploaded: "+JSON.parse(response.responseText).message);
 
-	var json = JSON.stringify(row);
-	var url = getBrandUrl();
-
-	//Make ajax call
-	$.ajax({
-	   url: url,
-	   type: 'POST',
-	   data: json,
-	   headers: {
-       	'Content-Type': 'application/json'
-       },
-	   success: function(response) {
-	   		uploadRows();
-	   },
-	   error: function(response){
-
-	   		row.error=response.responseText;
-	   		errorData.push(row);
-	   		uploadRows();
-	   }
-	});
-
+                }
+    	});
 }
 
 function downloadErrors(){
@@ -151,7 +157,6 @@ function displayBrandList(data){
 		let e = data[i];
 		var buttonHtml = ' <button class="btn btn-primary" title="Edit brand" onclick="displayEditBrand(' + e.id + ')">Edit</button>';
 		var row = '<tr>'
-		+ '<td>' + e.id + '</td>'
 		+ '<td>' + e.brand + '</td>'
 		+ '<td>'  + e.category + '</td>'
 		+ '<td>' + buttonHtml + '</td>'
@@ -187,8 +192,6 @@ function resetUploadDialog(){
 
 function updateUploadDialog(){
 	$('#rowCount').html("" + fileData.length);
-	$('#processCount').html("" + processCount);
-	$('#errorCount').html("" + errorData.length);
 }
 
 function updateFileName(){
@@ -224,10 +227,10 @@ function init(){
 	$('#refresh-data').click(getBrandList);
 	$('#upload-data').click(displayUploadData);
 	$('#process-data').click(processData);
-	$('#download-errors').click(downloadErrors);
+	$('#close-upload').click(getBrandList)
+
     $('#brandFile').on('change', updateFileName);
 }
 
 $(document).ready(init);
 $(document).ready(getBrandList);
-

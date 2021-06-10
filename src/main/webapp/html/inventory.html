@@ -128,7 +128,7 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title">Upload inventory</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" id="close-upload" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -139,17 +139,12 @@
                         <label class="custom-file-label" for="inventoryFile" id="inventoryFileName">Choose file</label>
                     </div>
                     <a th:href="@{/sample/inventory.tsv}" target="_blank">Download Sample</a>
-                    <br>
-                    Rows: <span id="rowCount">0</span>,
-                    Processed: <span id="processCount">0</span>,
-                    Errors: <span id="errorCount">0</span>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" title="Upload file" id="process-data">Upload</button>
-                    <button type="button" class="btn btn-warning" title="Download errors" id="download-errors">Download Errors</button>
-                </div>
+                    </div>
             </div>
         </div>
     </div>

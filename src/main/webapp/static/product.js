@@ -3,7 +3,11 @@ function getProductUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content")
 	return baseUrl + "/api/product";
 }
-
+function getProductListUrl(){
+	var baseUrl = $("meta[name=baseUrl]").attr("content");
+	console.log(baseUrl);
+	return baseUrl + "/api/product/list";
+}
 //BUTTON ACTIONS
 function displayAddProduct(){
     $('#add-product-modal').modal('toggle');
@@ -32,7 +36,7 @@ function addProduct(event){
             toastr.options.timeOut=3000;
 	   		toastr.success("Product added successfully");
 	   		toastr.options.closeButton=true;
-            toastr.options.timeOut=none;
+            toastr.options.timeOut=0;
 	   },
 	   error: handleAjaxError
 	});
@@ -65,7 +69,7 @@ function updateProduct(event){
                         toastr.options.timeOut=3000;
             	   		toastr.success("Product updated successfully");
             	   		toastr.options.closeButton=true;
-                        toastr.options.timeOut=none;
+                        toastr.options.timeOut=0;
 	   },
 	   error: handleAjaxError
 	});
@@ -103,13 +107,49 @@ function validateProduct(json) {
 		toastr.error("Name field must not be empty");
 		return false;
 	}
-	if(isBlank(json.mrp) || isNaN(parseFloat(json.mrp))) {
-		toastr.error("Mrp field must not be empty and must be a float value");
+	if(isBlank(json.mrp)) {
+		toastr.error("Mrp field must not be empty");
 		return false;
 	}
+	else if(isNaN(json.mrp)){
+           	    toastr.error("Mrp field must be a float value: "+ json.mrp);
+                       		return false;
+           	}
 	return true;
 }
 
+function validateProductUpload(arr){
+    for(var i in arr){
+        var row=arr[i];
+        console.log(row);
+       if(isBlank(row.brand)) {
+       		toastr.error("Brand field must not be empty");
+       		return false;
+       	}
+       	if(isBlank(row.category)) {
+       		toastr.error("Category field must not be empty");
+       		return false;
+       	}
+       	if(isBlank(row.barcode)) {
+       		toastr.error("Barcode field must not be empty");
+       		return false;
+       	}
+       	if(isBlank(row.name)) {
+       		toastr.error("Name field must not be empty");
+       		return false;
+       	}
+       	if(isBlank(row.mrp)) {
+       		toastr.error("Mrp field must not be empty");
+       		return false;
+       	}
+       	else if(isNaN((row.mrp))){
+       	    toastr.error("Mrp field must be a float value: "+ row.mrp);
+                   		return false;
+       	}
+
+    }
+    return true;
+}
 // FILE UPLOAD METHODS
 var fileData = [];
 var errorData = [];
@@ -117,7 +157,7 @@ var processCount = 0;
 
 function processData(){
 	var file = $('#productFile')[0].files[0];
-	checkHeader(file,["brand","category","name","mrp"],readFileDataCallback);
+	checkHeader(file,["barcode","brand","category","name","mrp"],readFileDataCallback);
 }
 
 function readFileDataCallback(results){
@@ -128,36 +168,38 @@ function readFileDataCallback(results){
 function uploadRows(){
 	//Update progress
 	updateUploadDialog();
-	//If everything processed then return
-	if(processCount==fileData.length){
-		return;
-	}
-
-	//Process next row
-	var row = fileData[processCount];
-	processCount++;
-
-	var json = JSON.stringify(row);
-	var url = getProductUrl();
-
-	//Make ajax call
-	$.ajax({
-	   url: url,
-	   type: 'POST',
-	   data: json,
-	   headers: {
-       	'Content-Type': 'application/json'
-       },
-	   success: function(response) {
-	   		uploadRows();
-	   },
-	   error: function(response){
-	   		row.error=response.responseText
-	   		errorData.push(row);
-	   		uploadRows();
-	   }
-	});
-
+	var row = fileData;
+	console.log(row);
+	var check=validateProductUpload(row);
+        	var json = JSON.stringify(row);
+        	var url = getProductListUrl();
+    if(check)
+    {
+    //Make ajax call
+    	$.ajax({
+    	   url: url,
+    	   type: 'POST',
+    	   data: json,
+    	   headers: {
+           	'Content-Type': 'application/json'
+           },
+    	   success: function(response) {
+    	   console.log(response);
+    	   getProductList();
+    	   $('#upload-product-modal').modal('hide');
+    	   		toastr.options.closeButton=false;
+                    	   		toastr.options.timeOut=3000;
+                    	   		toastr.success("File uploaded successfully");
+                    	   		toastr.options.closeButton=true;
+                                toastr.options.timeOut=0;
+    	   },
+    	   error: function(response){
+    	        console.log(response);
+                toastr.error("File cannot be uploaded: "+JSON.parse(response.responseText).message);
+    	   }
+    	});
+    }
+	return false;
 }
 
 function downloadErrors(){
@@ -210,8 +252,6 @@ function resetUploadDialog(){
 
 function updateUploadDialog(){
 	$('#rowCount').html("" + fileData.length);
-	$('#processCount').html("" + processCount);
-	$('#errorCount').html("" + errorData.length);
 }
 
 function updateFileName(){
@@ -243,9 +283,9 @@ function init(){
 	$('#submit-product').click(addProduct);
 	$('#update-product').click(updateProduct);
 	$('#refresh-data').click(getProductList);
+	$('#close-upload').click(getProductList);
 	$('#upload-data').click(displayUploadData);
 	$('#process-data').click(processData);
-	$('#download-errors').click(downloadErrors);
     $('#productFile').on('change', updateFileName)
 }
 

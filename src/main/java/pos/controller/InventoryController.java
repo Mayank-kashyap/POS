@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pos.model.InventoryData;
 import pos.model.InventoryForm;
+import pos.pojo.BrandPojo;
 import pos.pojo.InventoryPojo;
 import pos.pojo.ProductPojo;
 import pos.service.ApiException;
@@ -36,6 +37,17 @@ public class InventoryController extends ExceptionHandler{
         inventoryService.add(inventoryPojo);
     }
 
+    @ApiOperation(value = "Adds inventories")
+    @RequestMapping(path = "/api/inventory/list", method = RequestMethod.POST)
+    public void add(@RequestBody List<InventoryForm> inventoryFormList) throws ApiException {
+        List<InventoryPojo> inventoryPojoList=new ArrayList<>();
+        for(InventoryForm inventoryForm :inventoryFormList) {
+            ProductPojo productPojo= productService.getFromBarcode(inventoryForm.getBarcode());
+            InventoryPojo inventoryPojo= DataConversionUtil.convert(inventoryForm,productPojo);
+            inventoryPojoList.add(inventoryPojo);
+        }
+        inventoryService.addList(inventoryPojoList);
+    }
     //Retrieves a product by id
     @ApiOperation(value = "Get a product inventory by Id")
     @RequestMapping(path = "/api/inventory/{id}", method = RequestMethod.GET)

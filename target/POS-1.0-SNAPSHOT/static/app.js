@@ -1,5 +1,3 @@
-
-//HELPER METHOD
 function ajaxQuery(url, type, data, successFunction,errorFunction) {
 	$.ajax({
 	   url: url,
@@ -109,13 +107,18 @@ function checkHeader(file,header_list,callback) {
 	Papa.parse(file,{
 		delimiter: "\t",
 		step: function(results, parser) {
-
+		console.log(results.data);
+        if(results.data.length!=header_list.length)
+        allHeadersPresent=false;
+        else
+        {
         for(var i=0; i<header_list.length; i++){
-					if(!results.data.includes(header_list[i])){
-						allHeadersPresent = false;
-						break;
-					}
-				}
+        					if(!results.data.includes(header_list[i])){
+        						allHeadersPresent = false;
+        						break;
+        					}
+        				}
+        }
         parser.abort();
         results=null;
         delete results;
@@ -126,11 +129,12 @@ function checkHeader(file,header_list,callback) {
 					readFileData(file,callback);
 				}
 				else{
-					toastr.error("Improper File Format Try again with different file");
+					toastr.error("The file format is incorrect");
 				}
     }
 	});
 }
+
 
 $(function(){
     var current = location.pathname;
@@ -215,8 +219,8 @@ toastr.options = {
   "debug": false,
   "progressBar": true,
   "positionClass": "toast-top-right",
-  "showDuration": "300",
-  "hideDuration": "1000",
+  "showDuration": "none",
+  "hideDuration": "none",
   "timeOut": "none",
   "extendedTimeOut": "none",
   "showEasing": "swing",
@@ -224,4 +228,5 @@ toastr.options = {
   "showMethod": "fadeIn",
   "hideMethod": "fadeOut"
 };
+
 $(document).ready(init);

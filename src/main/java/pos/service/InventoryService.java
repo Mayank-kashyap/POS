@@ -1,5 +1,6 @@
 package pos.service;
 
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pos.dao.BrandDao;
@@ -26,9 +27,25 @@ public class InventoryService {
     @Transactional(rollbackOn = ApiException.class)
     public void add(InventoryPojo inventoryPojo) throws ApiException{
         check(inventoryPojo);
+        InventoryPojo inventoryPojo1=inventoryDao.getFromProductId(inventoryPojo.getProductId());
+        if(inventoryPojo1!=null)
+        {
+            inventoryPojo.setQuantity(inventoryPojo.getQuantity()+inventoryPojo1.getQuantity());
+            update(inventoryPojo1.getId(),inventoryPojo );
+        }
+        else
         inventoryDao.insert(inventoryPojo);
     }
 
+    @Transactional(rollbackOn = ApiException.class)
+    public void addList(List<InventoryPojo> inventoryPojoList) throws ApiException {
+        for (InventoryPojo inventoryPojo:inventoryPojoList){
+            check(inventoryPojo);
+        }
+        for (InventoryPojo inventoryPojo:inventoryPojoList){
+            add(inventoryPojo);
+        }
+    }
     //retrieves a product inventory by id
     @Transactional(rollbackOn = ApiException.class)
     public InventoryPojo get(int id) throws ApiException {

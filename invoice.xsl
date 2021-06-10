@@ -36,10 +36,6 @@
 							<fo:table-header>
 								<fo:table-cell
 									xsl:use-attribute-sets="tableBorder">
-									<fo:block font-weight="bold">Id</fo:block>
-								</fo:table-cell>
-								<fo:table-cell
-									xsl:use-attribute-sets="tableBorder">
 									<fo:block font-weight="bold">Name</fo:block>
 								</fo:table-cell>
 								<fo:table-cell
@@ -67,11 +63,6 @@
 	</xsl:template>
 	<xsl:template match="item">
 		<fo:table-row>
-			<fo:table-cell xsl:use-attribute-sets="tableBorder">
-				<fo:block>
-					<xsl:value-of select="id" />
-				</fo:block>
-			</fo:table-cell>
 
 			<fo:table-cell xsl:use-attribute-sets="tableBorder">
 				<fo:block>

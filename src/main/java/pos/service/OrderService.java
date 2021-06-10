@@ -13,7 +13,9 @@ import pos.pojo.OrderPojo;
 import pos.pojo.ProductPojo;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +27,6 @@ public class OrderService {
     private OrderDao orderDao;
     @Autowired
     private OrderItemDao orderItemDao;
-    @Autowired
-    private ProductDao productDao;
-    @Autowired
-    private InventoryDao inventoryDao;
     @Autowired
     private InventoryService inventoryService;
     @Autowired
@@ -46,6 +44,7 @@ public class OrderService {
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             orderItemPojo.setOrderId(orderId);
             check(orderItemPojo);
+            orderItemPojo.setSp(Math.round(orderItemPojo.getSp()*100.0)/100.0);
             orderItemDao.insert(orderItemPojo);
             updateInventory(orderItemPojo,0);
         }
@@ -68,6 +67,7 @@ public class OrderService {
             }
         }
         updateInventory(orderItemPojo,0);
+        orderItemPojo.setSp(Math.round(orderItemPojo.getSp()*100.0)/100.0);
         orderItemDao.insert(orderItemPojo);
     }
 
@@ -114,7 +114,7 @@ public class OrderService {
         updateInventory(orderItemPojo, orderItemPojo1.getQuantity());
         orderItemPojo1.setQuantity(orderItemPojo.getQuantity());
         orderItemPojo1.setOrderId(orderItemPojo1.getOrderId());
-        orderItemPojo1.setSp(orderItemPojo.getSp());
+        orderItemPojo1.setSp(Math.round(orderItemPojo.getSp()*100.0)/100.0);
     }
 
     //update order
@@ -139,8 +139,8 @@ public class OrderService {
         }
         if (quantity > quantityInInventory) {
             throw new ApiException(
-                    "Maximum allowed quantity: "
-                            + quantityInInventory);
+                    "he product inventory is: "
+                            + quantityInInventory+" order cannot be placed more than that");
         }
         inventoryService.getFromProductId(orderItemPojo.getProductId()).setQuantity(quantityInInventory - quantity);
     }
@@ -194,5 +194,16 @@ public class OrderService {
             orderItemPojoProductPojoMap.put(orderItemPojo,productPojo);
         }
         return orderItemPojoProductPojoMap;
+    }
+
+    @Transactional
+    public List<OrderItemPojo> getOrderItemInDate(LocalDateTime startDate, LocalDateTime endDate) throws ApiException {
+        List<OrderPojo>  orderPojoList=orderDao.getByDate(startDate,endDate);
+        List<OrderItemPojo> orderItemPojoList=new ArrayList<>();
+        for(OrderPojo orderPojo:orderPojoList){
+            List<OrderItemPojo> orderItemPojoList1=getOrderItems(orderPojo.getId());
+            orderItemPojoList.addAll(orderItemPojoList1);
+        }
+        return orderItemPojoList;
     }
 }

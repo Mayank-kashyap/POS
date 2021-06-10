@@ -12,7 +12,6 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,28 +83,18 @@ public class ReportService {
 
     //Generate sales list for sales report
     public SaleXmlList generateSalesList(ReportFilter reportFilter) throws Exception {
-
-        List<OrderItemPojo> orderItemPojoList = orderService.getAll();
-        List<OrderItemPojo> orderItemPojoList1 = FilterByDate(reportFilter, orderItemPojoList);
+        List<OrderItemPojo> orderItemPojoList1 = FilterByDate(reportFilter);
         Map<BrandPojo, Integer> quantityPerBrandCategory = getMapQuantity(reportFilter, orderItemPojoList1);
         Map<BrandPojo, Double> revenuePerBrandCategory = getMapRevenue(reportFilter, orderItemPojoList1);
         return DataConversionUtil.convertSalesList(quantityPerBrandCategory, revenuePerBrandCategory);
     }
 
     //Getting order items based on date
-    private List<OrderItemPojo> FilterByDate(ReportFilter reportFilter, List<OrderItemPojo> orderItemPojoList) throws ApiException {
+    private List<OrderItemPojo> FilterByDate(ReportFilter reportFilter) throws ApiException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime startDate = LocalDate.parse(reportFilter.getStartDate(), formatter).atStartOfDay();
         LocalDateTime endDate = LocalDate.parse(reportFilter.getEndDate(), formatter).atStartOfDay().plusDays(1);
-        List<OrderItemPojo> orderItemPojoList1 = new ArrayList<>();
-        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            if (((orderService.getOrder(orderItemPojo.getOrderId())).getDatetime().isAfter(startDate)
-                    && (orderService.getOrder(orderItemPojo.getOrderId())).getDatetime().isBefore(endDate)) || (orderService.getOrder(orderItemPojo.getOrderId())).getDatetime().isEqual(startDate)
-                    && (orderService.getOrder(orderItemPojo.getOrderId())).getDatetime().isEqual(endDate)) {
-                orderItemPojoList1.add(orderItemPojo);
-            }
-        }
-        return orderItemPojoList1;
+        return orderService.getOrderItemInDate(startDate,endDate);
     }
 
     // Gets quantity from brand

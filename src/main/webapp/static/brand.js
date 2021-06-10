@@ -3,6 +3,12 @@ function getBrandUrl(){
 	return baseUrl + "/api/brand";
 }
 
+function getBrandUrlList(){
+	var baseUrl = $("meta[name=baseUrl]").attr("content");
+	console.log(baseUrl);
+	return baseUrl + "/api/brand/list";
+}
+
 //BUTTON ACTIONS
 function addBrand(event){
 	//Set the values to update
@@ -27,7 +33,7 @@ function addBrand(event){
     	   		toastr.options.timeOut=3000;
     	   		toastr.success("Brand added successfully");
     	   		toastr.options.closeButton=true;
-                toastr.options.timeOut=none;
+                toastr.options.timeOut=0;
     	   },
     	   error: handleAjaxError
     	});
@@ -59,7 +65,7 @@ function updateBrand(event){
             toastr.options.timeOut=3000;
             toastr.success("Brand updated successfully");
             toastr.options.closeButton=true;
-            toastr.options.timeOut=none;
+            toastr.options.timeOut=0;
 	   },
 	   error: handleAjaxError
 	});
@@ -110,18 +116,9 @@ function readFileDataCallback(results){
 function uploadRows(){
 	//Update progress
 	updateUploadDialog();
-	//If everything processed then return
-	if(processCount==fileData.length){
-		return;
-	}
-
-	//Process next row
-	var row = fileData[processCount];
-	processCount++;
-	var json = JSON.stringify(row);
-	var check=validateBrand(json);
-	var url = getBrandUrl();
-
+	var row = fileData;
+    	var json = JSON.stringify(row);
+    	var url = getBrandUrlList();
     	//Make ajax call
     	$.ajax({
     	   url: url,
@@ -131,14 +128,20 @@ function uploadRows(){
            	'Content-Type': 'application/json'
            },
     	   success: function(response) {
-    	   		uploadRows();
-    	   },
+    	   		console.log(response);
+                getBrandList();
+                $('#upload-brand-modal').modal('hide');
+    	   		toastr.options.closeButton=false;
+                    	   		toastr.options.timeOut=3000;
+                    	   		toastr.success("File uploaded successfully");
+                    	   		toastr.options.closeButton=true;
+                                toastr.options.timeOut=0;
+    	   		},
     	   error: function(response){
+                console.log(response);
+                toastr.error("File cannot be uploaded: "+JSON.parse(response.responseText).message);
 
-    	   		row.error=response.responseText;
-    	   		errorData.push(row);
-    	   		uploadRows();
-    	   }
+                }
     	});
 }
 
@@ -190,8 +193,6 @@ function resetUploadDialog(){
 
 function updateUploadDialog(){
 	$('#rowCount').html("" + fileData.length);
-	$('#processCount').html("" + processCount);
-	$('#errorCount').html("" + errorData.length);
 }
 
 function updateFileName(){
@@ -227,7 +228,8 @@ function init(){
 	$('#refresh-data').click(getBrandList);
 	$('#upload-data').click(displayUploadData);
 	$('#process-data').click(processData);
-	$('#download-errors').click(downloadErrors);
+	$('#close-upload').click(getBrandList)
+
     $('#brandFile').on('change', updateFileName);
 }
 

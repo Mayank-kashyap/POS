@@ -94,7 +94,7 @@ function addOrderItem(event){
                         toastr.options.timeOut=3000;
             	   		toastr.success("Order Item added successfully");
             	   		toastr.options.closeButton=true;
-                        toastr.options.timeOut=none;
+                        toastr.options.timeOut=0;
 		},handleAjaxError);
 	}
 	return false;
@@ -118,7 +118,7 @@ function addOrder(event) {
                     toastr.options.timeOut=3000;
         	   		toastr.success("Order added successfully");
         	   		toastr.options.closeButton=true;
-                    toastr.options.timeOut=none;
+                    toastr.options.timeOut=0;
 	},handleAjaxError);
 
 	return false;
@@ -146,7 +146,7 @@ function updateOrder(event){
                       toastr.options.timeOut=3000;
           	   		toastr.success("Order updated successfully");
           	   		toastr.options.closeButton=true;
-                      toastr.options.timeOut=none;
+                      toastr.options.timeOut=0;
 			console.log(json);
 		},handleAjaxError);
 	}
@@ -212,11 +212,13 @@ function displayOrderItemListFrontend(data){
 	console.log('Printing Order items');
 	var $tbody = $('#orderItem-table').find('tbody');
 	$tbody.empty();
+	var srlNo=0;
 	for(var i in data){
 		var e = data[i];
+		srlNo++;
 		var buttonHtml = '<button class="btn btn-primary" onclick="deleteOrderItem(' + i + ')">delete</button>'
 		var row = '<tr>'
-		+ '<td>' + (i) + '</td>'
+		+ '<td>' + srlNo + '</td>'
 		+ '<td>' + e.barcode + '</td>'
 		+ '<td>'  + e.quantity + '</td>'
 		+ '<td>'  + e.sp + '</td>'
@@ -370,11 +372,14 @@ function validateOrderItem(json) {
 
 		return false;
 	}
-	if(isBlank(json.quantity) || isNaN(parseInt(json.quantity)) || !isInt(json.quantity)) {
-		toastr.error("Quantity must not be empty and must be an integer value");
-
-		return false;
-	}
+	if(isBlank(json.quantity)) {
+            		toastr.error("Quantity field must not be empty");
+            		return false;
+            	}
+            	else if(isNaN(parseInt(json.quantity)) || !isInt(json.quantity)){
+            	    toastr.error("Quantity field must be an integer value: "+ json.quantity);
+                            		return false;
+            	}
 
 	if(parseInt(json.quantity)<=0) {
 		toastr.error("Quantity must be positive");
@@ -382,9 +387,13 @@ function validateOrderItem(json) {
 		return false;
 	}
 
-	if(isBlank(json.sp) || isNaN(parseFloat(json.sp))) {
-    		toastr.error("Selling price must not be empty and must be a double value");
+	if(isBlank(json.sp) ) {
+    		toastr.error("Selling price must not be empty");
     		return false;
+    	}
+    	else if(isNaN((json.sp))){
+    	    toastr.error("Selling price must be a double value: "+json.sp);
+                		return false;
     	}
 
     if(parseFloat(json.sp)<=0) {

@@ -2,7 +2,6 @@
 
 import org.springframework.stereotype.Repository;
 import pos.pojo.InventoryPojo;
-import pos.pojo.ProductPojo;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -13,7 +12,7 @@ import java.util.List;
 
 //Repository for inventory
 @Repository
-<span class="fc" id="L16">public class InventoryDao extends AbstractDao{</span>
+<span class="fc" id="L15">public class InventoryDao extends AbstractDao{</span>
 
     @PersistenceContext
     private EntityManager em;
@@ -21,43 +20,43 @@ import java.util.List;
     //Insert into table
     @Transactional
     public void insert(InventoryPojo inventoryPojo){
-<span class="fc" id="L24">        em.persist(inventoryPojo);</span>
-<span class="fc" id="L25">    }</span>
+<span class="fc" id="L23">        em.persist(inventoryPojo);</span>
+<span class="fc" id="L24">    }</span>
 
     //Retrieve an inventory pojo with id
     public InventoryPojo select(int id){
-<span class="fc" id="L29">        return em.find(InventoryPojo.class,id);</span>
+<span class="fc" id="L28">        return em.find(InventoryPojo.class,id);</span>
     }
 
     //Retrieve list of inventory pojo
     public List&lt;InventoryPojo&gt; selectAll() {
-<span class="fc" id="L34">        String select_all = &quot;select p from InventoryPojo p&quot;;</span>
-<span class="fc" id="L35">        TypedQuery&lt;InventoryPojo&gt; query = getQuery(select_all,  InventoryPojo.class);</span>
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if(query == null){</span>
-<span class="nc" id="L37">            return new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L33">        String select_all = &quot;select p from InventoryPojo p&quot;;</span>
+<span class="fc" id="L34">        TypedQuery&lt;InventoryPojo&gt; query = getQuery(select_all,  InventoryPojo.class);</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if(query == null){</span>
+<span class="nc" id="L36">            return new ArrayList&lt;&gt;();</span>
         }
-<span class="fc" id="L39">        return query.getResultList();</span>
+<span class="fc" id="L38">        return query.getResultList();</span>
     }
 
     //Update an inventory
     public void update(int id,InventoryPojo inventoryPojo) {
-<span class="nc" id="L44">        InventoryPojo inventoryPojo1=em.find(InventoryPojo.class, id);</span>
-<span class="nc" id="L45">        inventoryPojo1.setProductId(inventoryPojo.getProductId());</span>
-<span class="nc" id="L46">        inventoryPojo1.setQuantity(inventoryPojo.getQuantity());</span>
-<span class="nc" id="L47">        em.merge(inventoryPojo1);</span>
-<span class="nc" id="L48">    }</span>
+<span class="nc" id="L43">        InventoryPojo inventoryPojo1=em.find(InventoryPojo.class, id);</span>
+<span class="nc" id="L44">        inventoryPojo1.setProductId(inventoryPojo.getProductId());</span>
+<span class="nc" id="L45">        inventoryPojo1.setQuantity(inventoryPojo.getQuantity());</span>
+<span class="nc" id="L46">        em.merge(inventoryPojo1);</span>
+<span class="nc" id="L47">    }</span>
 
     //get from product Id
     public InventoryPojo getFromProductId(int productId){
-<span class="fc" id="L52">        String select=&quot;select p from InventoryPojo p where productId=:productId&quot;;</span>
-<span class="fc" id="L53">        TypedQuery&lt;InventoryPojo&gt; query = getQuery(select, InventoryPojo.class);</span>
-<span class="fc" id="L54">        query.setParameter(&quot;productId&quot;, productId);</span>
-<span class="fc" id="L55">        List&lt;InventoryPojo&gt; res=query.getResultList();</span>
-<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        if(res.size()&gt;0){</span>
-<span class="fc" id="L57">            return res.get(0);</span>
+<span class="fc" id="L51">        String select=&quot;select p from InventoryPojo p where productId=:productId&quot;;</span>
+<span class="fc" id="L52">        TypedQuery&lt;InventoryPojo&gt; query = getQuery(select, InventoryPojo.class);</span>
+<span class="fc" id="L53">        query.setParameter(&quot;productId&quot;, productId);</span>
+<span class="fc" id="L54">        List&lt;InventoryPojo&gt; res=query.getResultList();</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if(res.size()&gt;0){</span>
+<span class="fc" id="L56">            return res.get(0);</span>
         }
         else
-<span class="nc" id="L60">            return null;</span>
+<span class="fc" id="L59">            return null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -10,6 +10,8 @@ import pos.pojo.BrandPojo;
 import pos.service.ApiException;
 import pos.service.BrandService;
 import pos.util.DataConversionUtil;
+
+import java.util.ArrayList;
 import java.util.List;
 
 //Controls the brand page of the application
@@ -26,6 +28,17 @@ public class BrandController extends ExceptionHandler{
     public void add(@RequestBody BrandForm brandForm) throws ApiException {
         BrandPojo brandPojo= DataConversionUtil.convert(brandForm);
         brandService.add(brandPojo);
+    }
+
+    @ApiOperation(value = "Adds a brand")
+    @RequestMapping(path = "/api/brand/list", method = RequestMethod.POST)
+    public void add(@RequestBody List<BrandForm> brandForm) throws ApiException {
+        List<BrandPojo> brandPojoList=new ArrayList<>();
+        for(BrandForm brandForm1:brandForm) {
+            BrandPojo brandPojo = DataConversionUtil.convert(brandForm1);
+            brandPojoList.add(brandPojo);
+        }
+        brandService.addList(brandPojoList);
     }
 
     //Retrieve a brand using id

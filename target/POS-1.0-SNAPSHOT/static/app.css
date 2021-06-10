@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;900&display=swap');
+
 html {
 	position: relative;
 	min-height: 100%;
@@ -10,7 +12,7 @@ body {
 font-size:25px;
 }
 .footer {
-	position: fixed;
+	position: absolute;
 	bottom: 0;
 	width: 100%;
 	height: 60px; /* Set the fixed height of the footer here */
@@ -25,7 +27,7 @@ font-size:25px;
     position: relative;
     padding: 10px 10px 10px 10px;
     text-align: center;
-    background-color: #dddfd4;
+    background-color: #e6e9f0;
     border-style: hidden;
     border-radius: 50%;
 }
@@ -33,8 +35,8 @@ font-size:25px;
 .product{
     position: relative;
     padding: 10px 10px 10px 10px;
-     text-align: center;
-    background-color: #c5d5cb;
+    text-align: center;
+    background-color: #9fa8a3;
     border-style: hidden;
     border-radius: 50%;
 }
@@ -42,8 +44,8 @@ font-size:25px;
 .inventory{
     position: relative;
     padding: 10px 10px 10px 10px;
-     text-align: center;
-    background-color: #e3e0cf;
+    text-align: center;
+    background-color: #e6e9f0;
     border-style: hidden;
     border-radius: 50%;
 }
@@ -51,7 +53,7 @@ font-size:25px;
 .order{
     position: relative;
     padding: 10px 10px 10px 10px;
-     text-align: center;
+    text-align: center;
     background-color: #9fa8a3;
     border-style: hidden;
     border-radius: 50%;
@@ -60,7 +62,7 @@ font-size:25px;
 .sales-report{
     position: relative;
     padding: 10px 10px 10px 10px;
-     text-align: center;
+    text-align: center;
     background-color: #e6e9f0;
     border-style: hidden;
     border-radius: 50%;

@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <sales_items>
     <sales_item>
-        <brand>puma</brand>
-        <category>shoes</category>
-        <quantity>10</quantity>
-        <revenue>450000.0</revenue>
+        <brand>dell</brand>
+        <category>pc</category>
+        <quantity>30</quantity>
+        <revenue>15027.0</revenue>
+    </sales_item>
+    <sales_item>
+        <brand>sonata</brand>
+        <category>wrist watch</category>
+        <quantity>90</quantity>
+        <revenue>36036.0</revenue>
+    </sales_item>
+    <sales_item>
+        <brand>cisca</brand>
+        <category>led</category>
+        <quantity>8</quantity>
+        <revenue>20600.0</revenue>
     </sales_item>
 </sales_items>

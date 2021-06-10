@@ -10,8 +10,6 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OrderInvoiceData {
     @XmlElement
-    private Integer id;
-    @XmlElement
     private String name;
     @XmlElement
     private Double mrp;

@@ -9,6 +9,7 @@ public class AboutAppServiceTest extends AbstractUnitTest{
     @Autowired
     private AboutAppService service;
 
+    //Test the about app controller
     @Test
     public void testServiceApis() {
         assertEquals("Point of sale", service.getName());

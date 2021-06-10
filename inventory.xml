@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <inventory_items>
     <inventory_item>
+        <brand>dell</brand>
+        <category>pc</category>
+        <quantity>60</quantity>
+    </inventory_item>
+    <inventory_item>
         <brand>sonata</brand>
         <category>wrist watch</category>
-        <quantity>8</quantity>
+        <quantity>200</quantity>
     </inventory_item>
     <inventory_item>
-        <brand>american tourister</brand>
-        <category>bag</category>
-        <quantity>8</quantity>
+        <brand>cisca</brand>
+        <category>led</category>
+        <quantity>2</quantity>
     </inventory_item>
     <inventory_item>
-        <brand>puma</brand>
-        <category>shoes</category>
-        <quantity>13</quantity>
-    </inventory_item>
-    <inventory_item>
-        <brand>sleepwell</brand>
-        <category>bed</category>
-        <quantity>10</quantity>
-    </inventory_item>
-    <inventory_item>
-        <brand>bata</brand>
-        <category>shoes</category>
-        <quantity>50</quantity>
+        <brand>sprite</brand>
+        <category>soft drink</category>
+        <quantity>37</quantity>
     </inventory_item>
 </inventory_items>

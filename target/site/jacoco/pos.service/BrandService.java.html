@@ -19,76 +19,87 @@ import java.util.List;
     //Add a brand
     @Transactional(rollbackOn = ApiException.class)
     public void add(BrandPojo brandPojo) throws ApiException{
-<span class="fc" id="L22">        checkNull(brandPojo);</span>
-<span class="fc" id="L23">        normalize(brandPojo);</span>
-<span class="fc" id="L24">        brandDao.insert(brandPojo);</span>
-<span class="fc" id="L25">    }</span>
 
+<span class="fc" id="L23">        normalize(brandPojo);</span>
+<span class="fc" id="L24">        check(brandPojo);</span>
+<span class="fc" id="L25">        brandDao.insert(brandPojo);</span>
+<span class="fc" id="L26">    }</span>
+
+    @Transactional(rollbackOn = ApiException.class)
+    public void addList(List&lt;BrandPojo&gt; brandPojoList) throws ApiException {
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        for (BrandPojo brandPojo: brandPojoList){</span>
+<span class="nc" id="L31">            normalize(brandPojo);</span>
+<span class="nc" id="L32">            check(brandPojo);</span>
+<span class="nc" id="L33">        }</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        for (BrandPojo brandPojo: brandPojoList){</span>
+<span class="nc" id="L35">            add(brandPojo);</span>
+<span class="nc" id="L36">        }</span>
+<span class="nc" id="L37">    }</span>
     //get a brand by id
     @Transactional(rollbackOn = ApiException.class)
     public BrandPojo get(int id) throws ApiException {
-<span class="fc" id="L30">        return getCheck(id);</span>
+<span class="fc" id="L41">        return getCheck(id);</span>
     }
 
     //get list of all brands
     @Transactional
     public List&lt;BrandPojo&gt; getAll() {
-<span class="fc" id="L36">        return brandDao.selectAll();</span>
+<span class="fc" id="L47">        return brandDao.selectAll();</span>
     }
 
     //update a brand
     @Transactional(rollbackOn  = ApiException.class)
     public void update(int id, BrandPojo brandPojo) throws ApiException {
-<span class="nc" id="L42">        checkNull(brandPojo);</span>
-<span class="nc" id="L43">        normalize(brandPojo);</span>
-<span class="nc" id="L44">        BrandPojo brandPojo1 = getCheck(id);</span>
-<span class="nc" id="L45">        brandPojo1.setBrand(brandPojo.getBrand());</span>
-<span class="nc" id="L46">        brandPojo1.setCategory(brandPojo.getCategory());</span>
-<span class="nc" id="L47">        brandDao.update(id,brandPojo1);</span>
-<span class="nc" id="L48">    }</span>
+<span class="nc" id="L53">        normalize(brandPojo);</span>
+<span class="nc" id="L54">        check(brandPojo);</span>
+<span class="nc" id="L55">        BrandPojo brandPojo1 = getCheck(id);</span>
+<span class="nc" id="L56">        brandPojo1.setBrand(brandPojo.getBrand());</span>
+<span class="nc" id="L57">        brandPojo1.setCategory(brandPojo.getCategory());</span>
+<span class="nc" id="L58">        brandDao.update(id,brandPojo1);</span>
+<span class="nc" id="L59">    }</span>
 
 
     //HELPER METHODS
     //check whether brand with given id exists or not
     @Transactional
     public BrandPojo getCheck(int id) throws ApiException {
-<span class="fc" id="L55">        BrandPojo brandPojo = brandDao.select(id);</span>
-<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        if (brandPojo == null) {</span>
-<span class="nc" id="L57">            throw new ApiException(&quot;Brand with given ID does not exit, id: &quot; + id);</span>
+<span class="fc" id="L66">        BrandPojo brandPojo = brandDao.select(id);</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if (brandPojo == null) {</span>
+<span class="nc" id="L68">            throw new ApiException(&quot;Brand with given ID does not exit, id: &quot; + id);</span>
         }
-<span class="fc" id="L59">        return brandPojo;</span>
+<span class="fc" id="L70">        return brandPojo;</span>
     }
 
     //checks whether the entered values are null or not
-    public void checkNull(BrandPojo brandPojo) throws ApiException {
-<span class="fc bfc" id="L64" title="All 2 branches covered.">        if(StringUtil.isEmpty(brandPojo.getBrand())) {</span>
-<span class="fc" id="L65">            throw new ApiException(&quot;Brand name cannot be empty&quot;);</span>
+    public void check(BrandPojo brandPojo) throws ApiException {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if(StringUtil.isEmpty(brandPojo.getBrand())) {</span>
+<span class="fc" id="L76">            throw new ApiException(&quot;Brand name cannot be empty&quot;);</span>
         }
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if(StringUtil.isEmpty(brandPojo.getCategory())) {</span>
-<span class="nc" id="L68">            throw new ApiException(&quot;Category name cannot be empty&quot;);</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if(StringUtil.isEmpty(brandPojo.getCategory())) {</span>
+<span class="nc" id="L79">            throw new ApiException(&quot;Category name cannot be empty&quot;);</span>
         }
-<span class="fc" id="L70">        List&lt;BrandPojo&gt; brandPojoList = brandDao.getIdFromBrandCategory(brandPojo.getBrand(),brandPojo.getCategory());</span>
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if(!brandPojoList.isEmpty()) {</span>
-<span class="nc" id="L72">            throw new ApiException(&quot;Brand and Category already exist&quot;);</span>
+<span class="fc" id="L81">        List&lt;BrandPojo&gt; brandPojoList = brandDao.getIdFromBrandCategory(brandPojo.getBrand(),brandPojo.getCategory());</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if(!brandPojoList.isEmpty()) {</span>
+<span class="nc" id="L83">            throw new ApiException(&quot;Brand and Category already exist: &quot;+brandPojo.getBrand()+&quot; &quot;+brandPojo.getCategory());</span>
         }
-<span class="fc" id="L74">    }</span>
+<span class="fc" id="L85">    }</span>
 
     //gets a brand by brand and category
     @Transactional()
     public BrandPojo getBrandPojo(String brand, String category) throws ApiException {
 
-<span class="nc" id="L80">        List&lt;BrandPojo&gt; brandPojoList = brandDao.getIdFromBrandCategory(brand, category);</span>
-<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (brandPojoList.isEmpty()) {</span>
-<span class="nc" id="L82">            throw new ApiException(&quot;The brand name and category given does not exist &quot; + brand + &quot; &quot; + category);</span>
+<span class="nc" id="L91">        List&lt;BrandPojo&gt; brandPojoList = brandDao.getIdFromBrandCategory(brand, category);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (brandPojoList.isEmpty()) {</span>
+<span class="nc" id="L93">            throw new ApiException(&quot;The brand name and category given does not exist &quot; + brand + &quot; &quot; + category);</span>
         }
-<span class="nc" id="L84">        return brandPojoList.get(0);</span>
+<span class="nc" id="L95">        return brandPojoList.get(0);</span>
     }
 
     //normalizes a pojo into lower case and trimmed
     protected static void normalize(BrandPojo brandPojo) {
-<span class="fc" id="L89">        brandPojo.setBrand(StringUtil.toLowerCase(brandPojo.getBrand()));</span>
-<span class="fc" id="L90">        brandPojo.setCategory(StringUtil.toLowerCase(brandPojo.getCategory()));</span>
-<span class="fc" id="L91">    }</span>
+<span class="fc" id="L100">        brandPojo.setBrand(StringUtil.toLowerCase(brandPojo.getBrand()));</span>
+<span class="fc" id="L101">        brandPojo.setCategory(StringUtil.toLowerCase(brandPojo.getCategory()));</span>
+<span class="fc" id="L102">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

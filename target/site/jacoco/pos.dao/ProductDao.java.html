@@ -47,15 +47,15 @@ import java.util.List;
 
     //Retrieve product pojo from barcode
     public ProductPojo getIdFromBarcode(String barcode){
-<span class="nc" id="L50">        String select_id_barcode = &quot;select p from ProductPojo p where barcode=:barcode&quot;;</span>
-<span class="nc" id="L51">        TypedQuery&lt;ProductPojo&gt; query = getQuery(select_id_barcode, ProductPojo.class);</span>
-<span class="nc" id="L52">        query.setParameter(&quot;barcode&quot;, barcode);</span>
-<span class="nc" id="L53">        List&lt;ProductPojo&gt; res=query.getResultList();</span>
-<span class="nc bnc" id="L54" title="All 2 branches missed.">        if(res.size()&gt;0){</span>
+<span class="fc" id="L50">        String select_id_barcode = &quot;select p from ProductPojo p where barcode=:barcode&quot;;</span>
+<span class="fc" id="L51">        TypedQuery&lt;ProductPojo&gt; query = getQuery(select_id_barcode, ProductPojo.class);</span>
+<span class="fc" id="L52">        query.setParameter(&quot;barcode&quot;, barcode);</span>
+<span class="fc" id="L53">        List&lt;ProductPojo&gt; res=query.getResultList();</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if(res.size()&gt;0){</span>
 <span class="nc" id="L55">            return res.get(0);</span>
         }
         else
-<span class="nc" id="L58">            return null;</span>
+<span class="fc" id="L58">            return null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

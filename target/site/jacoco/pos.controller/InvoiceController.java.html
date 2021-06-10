@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import pos.pojo.OrderPojo;
 import pos.service.ReportService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +15,7 @@ import java.io.IOException;
 //Controls the invoice generation of an order
 @Api
 @RestController
-<span class="fc" id="L19">public class InvoiceController extends ExceptionHandler{</span>
+<span class="fc" id="L18">public class InvoiceController extends ExceptionHandler{</span>
 
     @Autowired
     private ReportService reportService;
@@ -25,17 +24,17 @@ import java.io.IOException;
     @ApiOperation(value = &quot;Gets Invoice PDF by id&quot;)
     @RequestMapping(path = &quot;/api/invoice/{id}&quot;, method = RequestMethod.GET)
     public void get(@PathVariable int id, HttpServletResponse response) throws Exception {
-<span class="nc" id="L28">        byte[] bytes = reportService.generatePdfResponse(&quot;invoice&quot;, id);</span>
-<span class="nc" id="L29">        createPdfResponse(bytes, response);</span>
-<span class="nc" id="L30">    }</span>
+<span class="nc" id="L27">        byte[] bytes = reportService.generatePdfResponse(&quot;invoice&quot;, id);</span>
+<span class="nc" id="L28">        createPdfResponse(bytes, response);</span>
+<span class="nc" id="L29">    }</span>
 
     //Creates PDF
     public void createPdfResponse(byte[] bytes, HttpServletResponse response) throws IOException {
-<span class="nc" id="L34">        response.setContentType(&quot;application/pdf&quot;);</span>
-<span class="nc" id="L35">        response.setContentLength(bytes.length);</span>
+<span class="nc" id="L33">        response.setContentType(&quot;application/pdf&quot;);</span>
+<span class="nc" id="L34">        response.setContentLength(bytes.length);</span>
 
-<span class="nc" id="L37">        response.getOutputStream().write(bytes);</span>
-<span class="nc" id="L38">        response.getOutputStream().flush();</span>
-<span class="nc" id="L39">    }</span>
+<span class="nc" id="L36">        response.getOutputStream().write(bytes);</span>
+<span class="nc" id="L37">        response.getOutputStream().flush();</span>
+<span class="nc" id="L38">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -41,16 +41,18 @@ import java.io.IOException;
     @ApiOperation(value = &quot;Gets Sales Report&quot;)
     @RequestMapping(path = &quot;/api/report/sales&quot;, method = RequestMethod.POST)
     public void getSales(@RequestBody ReportFilter reportFilter, HttpServletResponse response) throws Exception {
-<span class="nc" id="L44">        byte[] bytes = reportService.generatePdfResponse(&quot;sales&quot;, reportFilter);</span>
-<span class="nc" id="L45">        createPdfResponse(bytes, response);</span>
-<span class="nc" id="L46">    }</span>
+<span class="nc" id="L44">        reportFilter.setBrand(reportFilter.getBrand().toLowerCase().trim());</span>
+<span class="nc" id="L45">        reportFilter.setCategory(reportFilter.getCategory().toLowerCase().trim());</span>
+<span class="nc" id="L46">        byte[] bytes = reportService.generatePdfResponse(&quot;sales&quot;, reportFilter);</span>
+<span class="nc" id="L47">        createPdfResponse(bytes, response);</span>
+<span class="nc" id="L48">    }</span>
 
     public void createPdfResponse(byte[] bytes, HttpServletResponse response) throws IOException {
-<span class="nc" id="L49">        response.setContentType(&quot;application/pdf&quot;);</span>
-<span class="nc" id="L50">        response.setContentLength(bytes.length);</span>
+<span class="nc" id="L51">        response.setContentType(&quot;application/pdf&quot;);</span>
+<span class="nc" id="L52">        response.setContentLength(bytes.length);</span>
 
-<span class="nc" id="L52">        response.getOutputStream().write(bytes);</span>
-<span class="nc" id="L53">        response.getOutputStream().flush();</span>
-<span class="nc" id="L54">    }</span>
+<span class="nc" id="L54">        response.getOutputStream().write(bytes);</span>
+<span class="nc" id="L55">        response.getOutputStream().flush();</span>
+<span class="nc" id="L56">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -15,107 +15,91 @@ import pos.pojo.ProductPojo;
 
 public class OrderServiceTest extends AbstractUnitTest{
 
+    //declare all pojo beforehand
     @Before
     public void Declaration() throws ApiException {
         declare();
     }
 
+    //testing addition of order
     @Test
     public void testAdd() throws ApiException {
 
-        OrderItemPojo order_item = getOrderItemPojo(productPojoList.get(0), 5, 30.5);
-        List<OrderItemPojo> lis = new ArrayList<OrderItemPojo>();
-        lis.add(order_item);
-        List<OrderPojo> order_list_before = orderService.getAllOrders();
-        List<OrderItemPojo> orderitem_list_before = orderService.getAll();
-        orderService.add(lis);
-        List<OrderPojo> order_list_after = orderService.getAllOrders();
-        List<OrderItemPojo> orderitem_list_after = orderService.getAll();
+        OrderItemPojo orderItemPojo = getOrderItemPojo(productPojoList.get(0), 5, 30.5);
+        List<OrderItemPojo> orderItemPojoList3 = new ArrayList<>();
+        orderItemPojoList3.add(orderItemPojo);
+        List<OrderPojo> orderPojoList= orderService.getAllOrders();
+        List<OrderItemPojo> orderItemPojoList = orderService.getAll();
+        orderService.add(orderItemPojoList3);
+        List<OrderPojo> orderPojoList1 = orderService.getAllOrders();
+        List<OrderItemPojo> orderItemPojoList1 = orderService.getAll();
 
-        assertEquals(order_list_before.size() + 1, order_list_after.size());
-        assertEquals(orderitem_list_before.size() + 1, orderitem_list_after.size());
-        List<OrderItemPojo> db_orderitem_list = orderService.getOrderItems(order_item.getOrderId());
-        assertEquals(lis.size(), db_orderitem_list.size());
-        assertEquals(order_item.getOrderId(), db_orderitem_list.get(0).getOrderId());
-        assertEquals(order_item.getProductId(), db_orderitem_list.get(0).getProductId());
-        assertEquals(order_item.getQuantity(), db_orderitem_list.get(0).getQuantity());
-        assertEquals(order_item.getSp(), db_orderitem_list.get(0).getSp(), 0.001);
+        assertEquals(orderPojoList.size() + 1, orderPojoList1.size());
+        assertEquals(orderItemPojoList.size() + 1, orderItemPojoList1.size());
+        List<OrderItemPojo> orderItemPojoList2 = orderService.getOrderItems(orderItemPojo.getOrderId());
+        assertEquals(orderItemPojoList3.size(), orderItemPojoList2.size());
+        assertEquals(orderItemPojo.getOrderId(), orderItemPojoList2.get(0).getOrderId());
+        assertEquals(orderItemPojo.getProductId(), orderItemPojoList2.get(0).getProductId());
+        assertEquals(orderItemPojo.getQuantity(), orderItemPojoList2.get(0).getQuantity());
+        assertEquals(orderItemPojo.getSp(), orderItemPojoList2.get(0).getSp(), 0.001);
 
     }
 
-    /* Testing adding of invalid order. Exception should be thrown */
+    // Testing adding of invalid order
     @Test
-    public void testAddWrong() throws ApiException {
+    public void testAddWrong() {
 
-        OrderItemPojo order_item = getWrongOrderItemPojo(productPojoList.get(0));
-        List<OrderItemPojo> lis = new ArrayList<OrderItemPojo>();
-        lis.add(order_item);
+        OrderItemPojo orderItemPojo = getWrongOrderItemPojo(productPojoList.get(0));
+        List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
+        orderItemPojoList.add(orderItemPojo);
 
         try {
-            orderService.add(lis);
+            orderService.add(orderItemPojoList);
             fail("ApiException did not occur");
         } catch (ApiException e) {
             assertEquals(e.getMessage(), "Quantity must be positive");
         }
 
     }
-    /* Testing updation of order items */
+    // Testing updating of order items
     @Test
     public void testUpdate() throws ApiException {
 
-        OrderItemPojo new_order_item = getOrderItemPojo(productPojoList.get(0), 7, 50);
-        orderService.update(orderItemPojoList.get(0).getId(), new_order_item);
-        assertEquals(orderItemPojoList.get(0).getProductId(), new_order_item.getProductId());
-        assertEquals(orderItemPojoList.get(0).getQuantity(), new_order_item.getQuantity());
-        assertEquals(orderItemPojoList.get(0).getSp(), new_order_item.getSp(), 0.001);
+        OrderItemPojo orderItemPojo= getOrderItemPojo(productPojoList.get(0), 7, 50);
+        orderService.update(orderItemPojoList.get(0).getId(), orderItemPojo);
+        assertEquals(orderItemPojoList.get(0).getProductId(), orderItemPojo.getProductId());
+        assertEquals(orderItemPojoList.get(0).getQuantity(), orderItemPojo.getQuantity());
+        assertEquals(orderItemPojoList.get(0).getSp(), orderItemPojo.getSp(), 0.001);
     }
 
-    /* Testing adding of invalid order (with invalid product). Exception should be thrown
-    @Test
-    public void testAddNullProduct() throws ApiException {
-
-        OrderItemPojo order_item = getOrderItemPojo(null,5, 60);
-        List<OrderItemPojo> lis = new ArrayList<OrderItemPojo>();
-        lis.add(order_item);
-
-        try {
-            orderService.add(lis);
-            fail("ApiException did not occur");
-        } catch (ApiException e) {
-            assertEquals(e.getMessage(), "Product with this id does not exist");
-        }
-
-    }
-
-     */
-
-    /* Testing Get for order items */
+    // Testing getting for order items
     @Test
     public void testGet() throws ApiException {
 
-        OrderItemPojo db_orderitem_pojo = orderService.get(orderItemPojoList.get(0).getId());
-        assertEquals(orderItemPojoList.get(0).getOrderId(), db_orderitem_pojo.getOrderId());
-        assertEquals(orderItemPojoList.get(0).getProductId(), db_orderitem_pojo.getProductId());
-        assertEquals(orderItemPojoList.get(0).getQuantity(), db_orderitem_pojo.getQuantity());
-        assertEquals(orderItemPojoList.get(0).getSp(), db_orderitem_pojo.getSp(), 0.001);
+        OrderItemPojo orderItemPojo = orderService.get(orderItemPojoList.get(0).getId());
+        assertEquals(orderItemPojoList.get(0).getOrderId(), orderItemPojo.getOrderId());
+        assertEquals(orderItemPojoList.get(0).getProductId(), orderItemPojo.getProductId());
+        assertEquals(orderItemPojoList.get(0).getQuantity(), orderItemPojo.getQuantity());
+        assertEquals(orderItemPojoList.get(0).getSp(), orderItemPojo.getSp(), 0.001);
     }
 
 
-    private OrderItemPojo getOrderItemPojo(ProductPojo p, int quantity, double sp) {
-        OrderItemPojo order_item = new OrderItemPojo();
-        order_item.setProductId(p.getId());
-        order_item.setQuantity(quantity);
-        order_item.setSp(sp);
-        return order_item;
+    //returns an orderItem pojo
+    private OrderItemPojo getOrderItemPojo(ProductPojo productPojo, int quantity, double sp) {
+        OrderItemPojo orderItemPojo = new OrderItemPojo();
+        orderItemPojo.setProductId(productPojo.getId());
+        orderItemPojo.setQuantity(quantity);
+        orderItemPojo.setSp(sp);
+        return orderItemPojo;
     }
 
 
 
-    private OrderItemPojo getWrongOrderItemPojo(ProductPojo p) {
-        OrderItemPojo order_item = new OrderItemPojo();
-        order_item.setProductId(p.getId());
-        order_item.setQuantity(-5);
-        order_item.setSp(30.0);
-        return order_item;
+    private OrderItemPojo getWrongOrderItemPojo(ProductPojo productPojo) {
+        OrderItemPojo orderItemPojo = new OrderItemPojo();
+        orderItemPojo.setProductId(productPojo.getId());
+        orderItemPojo.setQuantity(-5);
+        orderItemPojo.setSp(30.0);
+        return orderItemPojo;
     }
 }

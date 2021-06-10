@@ -14,200 +14,201 @@ import static org.junit.Assert.assertEquals;
 
 public class DataConversionUtilTest extends AbstractUnitTest{
 
+    //declare all the pojo beforehand
     @Before
     public void Declaration() throws ApiException {
         declare();
     }
 
-    /* Testing conversion of brand form to pojo */
+    // Testing conversion of brand form to pojo
     @Test
     public void testConvertBrandFormToPojo() {
 
-        BrandForm form = new BrandForm();
-        form.setBrand("amul");
-        form.setCategory("milk");
-        BrandPojo brand_pojo = DataConversionUtil.convert(form);
-        assertEquals(form.getBrand(), brand_pojo.getBrand());
-        assertEquals(form.getCategory(), brand_pojo.getCategory());
+        BrandForm brandForm = new BrandForm();
+        brandForm.setBrand("amul");
+        brandForm.setCategory("milk");
+        BrandPojo brandPojo = DataConversionUtil.convert(brandForm);
+        assertEquals(brandForm.getBrand(), brandPojo.getBrand());
+        assertEquals(brandForm.getCategory(), brandPojo.getCategory());
     }
 
-    /* Testing conversion of brand pojo to data */
+    // Testing conversion of brand pojo to data
     @Test
     public void testConvertBrandPojoToData() {
 
-        BrandPojo pojo = new BrandPojo();
-        pojo.setId(1);
-        pojo.setBrand("amul");
-        pojo.setCategory("dairy");
-        BrandData brand_data = DataConversionUtil.convert(pojo);
-        assertEquals(pojo.getBrand(), brand_data.getBrand());
-        assertEquals(pojo.getCategory(), brand_data.getCategory());
+        BrandPojo brandPojo = new BrandPojo();
+        brandPojo.setId(1);
+        brandPojo.setBrand("amul");
+        brandPojo.setCategory("dairy");
+        BrandData brandData = DataConversionUtil.convert(brandPojo);
+        assertEquals(brandPojo.getBrand(), brandData.getBrand());
+        assertEquals(brandPojo.getCategory(), brandData.getCategory());
     }
 
-    /* Testing conversion of product form to pojo */
+    // Testing conversion of product form to pojo
     @Test
     public void testConvertProductFormToPojo() throws ApiException {
 
-        ProductForm form = new ProductForm();
-        form.setBrand("brand");
-        form.setCategory("category0");
-        form.setMrp(50.0);
-        form.setName("milk");
-        ProductPojo product_pojo = DataConversionUtil.convert( form, brandPojoList.get(0));
-        assertEquals(form.getBrand(), brandService.get(product_pojo.getBrandCategory()).getBrand());
-        assertEquals(form.getCategory(), brandService.get(product_pojo.getBrandCategory()).getCategory());
-        assertEquals(form.getName(), product_pojo.getName());
-        assertEquals(form.getMrp(), product_pojo.getMrp(), 0.001);
+        ProductForm productForm = new ProductForm();
+        productForm.setBrand("brand");
+        productForm.setCategory("category0");
+        productForm.setMrp(50.0);
+        productForm.setName("milk");
+        ProductPojo productPojo = DataConversionUtil.convert(productForm, brandPojoList.get(0));
+        assertEquals(productForm.getBrand(), brandService.get(productPojo.getBrandCategory()).getBrand());
+        assertEquals(productForm.getCategory(), brandService.get(productPojo.getBrandCategory()).getCategory());
+        assertEquals(productForm.getName(), productPojo.getName());
+        assertEquals(productForm.getMrp(), productPojo.getMrp(), 0.001);
     }
 
-    /* Testing conversion of product pojo to data */
+    // Testing conversion of product pojo to data
     @Test
     public void testConvertProductPojoToData() throws ApiException {
 
-        ProductPojo product_pojo = new ProductPojo();
-        product_pojo.setBarcode("abcdefgh");
-        product_pojo.setBrandCategory(brandPojoList.get(0).getId());
-        product_pojo.setMrp(50.0);
-        product_pojo.setName("milk");
-        ProductData product_data = DataConversionUtil.convert(product_pojo,brandPojoList.get(0));
-        assertEquals(product_data.getBarcode(), product_pojo.getBarcode());
-        assertEquals(product_data.getBrand(), brandService.get(product_pojo.getBrandCategory()).getBrand());
-        assertEquals(product_data.getCategory(), brandService.get(product_pojo.getBrandCategory()).getCategory());
-        assertEquals(product_data.getName(), product_pojo.getName());
-        assertEquals(product_data.getMrp(), product_pojo.getMrp(), 0.001);
+        ProductPojo productPojo = new ProductPojo();
+        productPojo.setBarcode("barcode1");
+        productPojo.setBrandCategory(brandPojoList.get(0).getId());
+        productPojo.setMrp(50.0);
+        productPojo.setName("milk");
+        ProductData productData= DataConversionUtil.convert(productPojo,brandPojoList.get(0));
+        assertEquals(productData.getBarcode(), productPojo.getBarcode());
+        assertEquals(productData.getBrand(), brandService.get(productPojo.getBrandCategory()).getBrand());
+        assertEquals(productData.getCategory(), brandService.get(productPojo.getBrandCategory()).getCategory());
+        assertEquals(productData.getName(), productPojo.getName());
+        assertEquals(productData.getMrp(), productPojo.getMrp(), 0.001);
     }
 
-    /* Testing conversion of inventory form to pojo */
+    // Testing conversion of inventory form to pojo
     @Test
     public void testConvertInventoryFormToPojo() throws ApiException {
 
-        InventoryForm form = new InventoryForm();
-        form.setBarcode(productPojoList.get(0).getBarcode());
-        form.setQuantity(20);
-        InventoryPojo inventory_pojo = DataConversionUtil.convert(form, productPojoList.get(0));
-        assertEquals(form.getQuantity(), inventory_pojo.getQuantity());
+        InventoryForm inventoryForm= new InventoryForm();
+        inventoryForm.setBarcode(productPojoList.get(0).getBarcode());
+        inventoryForm.setQuantity(20);
+        InventoryPojo inventoryPojo = DataConversionUtil.convert(inventoryForm, productPojoList.get(0));
+        assertEquals(inventoryForm.getQuantity(), inventoryPojo.getQuantity());
     }
 
-    /* Testing conversion of inventory pojo to data */
+    // Testing conversion of inventory pojo to data
     @Test
     public void testConvertInventoryPojoToData() throws ApiException {
 
-        InventoryPojo pojo = new InventoryPojo();
-        pojo.setProductId(productPojoList.get(0).getId());
-        pojo.setQuantity(20);
-        InventoryData inventory_data = DataConversionUtil.convert(pojo,productPojoList.get(0));
-        assertEquals(inventory_data.getBarcode(), productService.get(pojo.getProductId()).getBarcode());
-        assertEquals(inventory_data.getQuantity(), pojo.getQuantity());
+        InventoryPojo inventoryPojo = new InventoryPojo();
+        inventoryPojo.setProductId(productPojoList.get(0).getId());
+        inventoryPojo.setQuantity(20);
+        InventoryData inventoryData = DataConversionUtil.convert(inventoryPojo,productPojoList.get(0));
+        assertEquals(inventoryData.getBarcode(), productService.get(inventoryPojo.getProductId()).getBarcode());
+        assertEquals(inventoryData.getQuantity(), inventoryPojo.getQuantity());
     }
 
-    /* Testing conversion of orderitem form to pojo */
+    // Testing conversion of orderItem form to pojo
     @Test
     public void testConvertOrderItemFormToPojo() throws ApiException {
 
-        OrderItemForm form = new OrderItemForm();
-        form.setBarcode(productPojoList.get(0).getBarcode());
-        form.setQuantity(2);
-        OrderItemPojo pojo = DataConversionUtil.convert(productPojoList.get(0), form);
-        assertEquals(form.getBarcode(), productService.get(pojo.getProductId()).getBarcode());
-        assertEquals(form.getQuantity(), pojo.getQuantity());
+        OrderItemForm orderItemForm = new OrderItemForm();
+        orderItemForm.setBarcode(productPojoList.get(0).getBarcode());
+        orderItemForm.setQuantity(2);
+        OrderItemPojo orderItemPojo = DataConversionUtil.convert(productPojoList.get(0), orderItemForm);
+        assertEquals(orderItemForm.getBarcode(), productService.get(orderItemPojo.getProductId()).getBarcode());
+        assertEquals(orderItemForm.getQuantity(), orderItemPojo.getQuantity());
     }
 
-    /* Testing conversion of orderitem pojo to data */
+    // Testing conversion of orderItem pojo to data
     @Test
     public void testConvertOrderItemPojoToData() throws ApiException {
 
-        OrderItemPojo pojo = new OrderItemPojo();
-        pojo.setProductId(productPojoList.get(0).getId());
-        pojo.setOrderId(orderId);
-        pojo.setQuantity(2);
-        pojo.setSp(30.0);
-        OrderItemData data = DataConversionUtil.convert(pojo,productPojoList.get(0));
-        assertEquals(data.getBarcode(), productService.get(pojo.getProductId()).getBarcode());
-        assertEquals(data.getOrderId(), pojo.getOrderId());
-        assertEquals(data.getQuantity(), pojo.getQuantity());
+        OrderItemPojo orderItemPojo = new OrderItemPojo();
+        orderItemPojo.setProductId(productPojoList.get(0).getId());
+        orderItemPojo.setOrderId(orderId);
+        orderItemPojo.setQuantity(2);
+        orderItemPojo.setSp(30.0);
+        OrderItemData data = DataConversionUtil.convert(orderItemPojo,productPojoList.get(0));
+        assertEquals(data.getBarcode(), productService.get(orderItemPojo.getProductId()).getBarcode());
+        assertEquals(data.getOrderId(), orderItemPojo.getOrderId());
+        assertEquals(data.getQuantity(), orderItemPojo.getQuantity());
     }
 
-    /* Testing conversion of list of brand pojos to data */
+    // Testing conversion of list of brand pojo to data
     @Test
     public void testListBrandPojoToData() {
-        List<BrandPojo> brand_list = brandService.getAll();
-        List<BrandData> brand_data_list = DataConversionUtil.convert(brand_list);
-        assertEquals(brand_list.size(), brand_data_list.size());
-        assertEquals(brand_list.get(0).getBrand(), brand_data_list.get(0).getBrand());
-        assertEquals(brand_list.get(0).getCategory(), brand_data_list.get(0).getCategory());
+        List<BrandPojo> brandPojoList = brandService.getAll();
+        List<BrandData> brandDataList = DataConversionUtil.convert(brandPojoList);
+        assertEquals(brandPojoList.size(), brandDataList.size());
+        assertEquals(brandPojoList.get(0).getBrand(), brandDataList.get(0).getBrand());
+        assertEquals(brandPojoList.get(0).getCategory(), brandDataList.get(0).getCategory());
     }
 
 
-    /* Testing conversion of list of order items to invoice */
+    // Testing conversion of list of order items to invoice
     @Test
     public void testOrderItemstoInvoice() throws ApiException {
-        List<OrderItemPojo> order_item_list = orderService.getAll();
-        Map<OrderItemPojo,ProductPojo> productPojoList=orderService.getProductPojos(orderItemPojoList);
-        OrderInvoiceXmlList invoice_list = DataConversionUtil.convertToInvoiceDataList(order_item_list,productPojoList);
-        assertEquals(order_item_list.size(), invoice_list.getOrderInvoiceData().size());
-        assertEquals(invoice_list.getOrderInvoiceData().get(0).getName(), productService.get(order_item_list.get(0).getProductId()).getName());
-        assertEquals(invoice_list.getOrderInvoiceData().get(0).getQuantity(), order_item_list.get(0).getQuantity());
-        assertEquals(invoice_list.getOrderInvoiceData().get(0).getMrp(), order_item_list.get(0).getSp(), 0.001);
+        List<OrderItemPojo> orderItemPojoList = orderService.getAll();
+        Map<OrderItemPojo,ProductPojo> productPojoList=orderService.getProductPojos(this.orderItemPojoList);
+        OrderInvoiceXmlList orderInvoiceXmlList = DataConversionUtil.convertToInvoiceDataList(orderItemPojoList,productPojoList);
+        assertEquals(orderItemPojoList.size(), orderInvoiceXmlList.getOrderInvoiceData().size());
+        assertEquals(orderInvoiceXmlList.getOrderInvoiceData().get(0).getName(), productService.get(orderItemPojoList.get(0).getProductId()).getName());
+        assertEquals(orderInvoiceXmlList.getOrderInvoiceData().get(0).getQuantity(), orderItemPojoList.get(0).getQuantity());
+        assertEquals(orderInvoiceXmlList.getOrderInvoiceData().get(0).getMrp(), orderItemPojoList.get(0).getSp(), 0.001);
     }
 
 
-    /* Testing conversion of list of orderitem forms to pojos */
+    // Testing conversion of list of orderItem forms to pojo
     @Test
     public void testOrderItemsFormtoPojo() throws ApiException {
-        OrderItemForm[] order_item_forms = new OrderItemForm[1];
-        OrderItemForm form1 = new OrderItemForm();
-        form1.setBarcode(productPojoList.get(0).getBarcode());
-        form1.setQuantity(2);
-        order_item_forms[0] = form1;
-        Map<String, ProductPojo> barcode_product = new HashMap<String, ProductPojo>();
+        OrderItemForm[] orderItemForms = new OrderItemForm[1];
+        OrderItemForm orderItemForm = new OrderItemForm();
+        orderItemForm.setBarcode(productPojoList.get(0).getBarcode());
+        orderItemForm.setQuantity(2);
+        orderItemForms[0] = orderItemForm;
+        Map<String, ProductPojo> barcode_product = new HashMap<>();
         barcode_product.put(productPojoList.get(0).getBarcode(), productPojoList.get(0));
         barcode_product.put(productPojoList.get(1).getBarcode(), productPojoList.get(1));
 
-        List<OrderItemPojo> pojo_list = DataConversionUtil.convertOrderItemForms(barcode_product, order_item_forms);
-        assertEquals(1, pojo_list.size());
-        assertEquals(order_item_forms[0].getBarcode(), productService.get(pojo_list.get(0).getProductId()).getBarcode());
-        assertEquals(order_item_forms[0].getQuantity(), pojo_list.get(0).getQuantity());
+        List<OrderItemPojo> orderItemPojoList = DataConversionUtil.convertOrderItemForms(barcode_product, orderItemForms);
+        assertEquals(1, orderItemPojoList.size());
+        assertEquals(orderItemForms[0].getBarcode(), productService.get(orderItemPojoList.get(0).getProductId()).getBarcode());
+        assertEquals(orderItemForms[0].getQuantity(), orderItemPojoList.get(0).getQuantity());
     }
 
-    /* Testing conversion of order pojo to data */
+    // Testing conversion of order pojo to data
     @Test
     public void testConvertOrderPojoToData() throws ApiException {
-        OrderPojo pojo = orderService.getOrder(orderId);
-        OrderData order_data = DataConversionUtil.convert(pojo);
-        assertEquals(pojo.getId(), order_data.getId());
+        OrderPojo orderPojo = orderService.getOrder(orderId);
+        OrderData orderData = DataConversionUtil.convert(orderPojo);
+        assertEquals(orderPojo.getId(), orderData.getId());
     }
 
-    /* Test conversion to inventory report list */
+    // Test conversion to inventory report list
     @Test
-    public void testConvertInventoryReportList() throws ApiException {
-        Map<BrandPojo, Integer> quantityPerBrandPojo = new HashMap<BrandPojo, Integer>();
-        BrandPojo b1 = new BrandPojo();
-        b1.setBrand("brand1");
-        b1.setCategory("category1");
-        BrandPojo b2 = new BrandPojo();
-        b2.setBrand("brand2");
-        b2.setCategory("category2");
-        quantityPerBrandPojo.put(b1, 1);
-        quantityPerBrandPojo.put(b2, 2);
+    public void testConvertInventoryReportList() {
+        Map<BrandPojo, Integer> quantityPerBrandPojo = new HashMap<>();
+        BrandPojo brandPojo = new BrandPojo();
+        brandPojo.setBrand("brand1");
+        brandPojo.setCategory("category1");
+        BrandPojo brandPojo1 = new BrandPojo();
+        brandPojo1.setBrand("brand2");
+        brandPojo1.setCategory("category2");
+        quantityPerBrandPojo.put(brandPojo, 1);
+        quantityPerBrandPojo.put(brandPojo1, 2);
         InventoryXmlList inv_list = DataConversionUtil.convertInventoryReportList(quantityPerBrandPojo);
         assertEquals(2, inv_list.getInventoryReportData().size());
     }
 
-    /* Test conversion to sales list */
+    // Test conversion to sales list
     @Test
     public void testConvertSalesList() {
-        Map<BrandPojo, Integer> quantityPerBrandPojo = new HashMap<BrandPojo, Integer>();
-        Map<BrandPojo, Double> revenuePerBrandCategory = new HashMap<BrandPojo, Double>();
-        BrandPojo b1 = new BrandPojo();
-        b1.setBrand("brand1");
-        b1.setCategory("category1");
-        BrandPojo b2 = new BrandPojo();
-        b2.setBrand("brand2");
-        b2.setCategory("category2");
-        quantityPerBrandPojo.put(b1, 1);
-        quantityPerBrandPojo.put(b2, 2);
-        revenuePerBrandCategory.put(b1, 100.00);
-        revenuePerBrandCategory.put(b2, 200.00);
+        Map<BrandPojo, Integer> quantityPerBrandPojo = new HashMap<>();
+        Map<BrandPojo, Double> revenuePerBrandCategory = new HashMap<>();
+        BrandPojo brandPojo = new BrandPojo();
+        brandPojo.setBrand("brand1");
+        brandPojo.setCategory("category1");
+        BrandPojo brandPojo1 = new BrandPojo();
+        brandPojo1.setBrand("brand2");
+        brandPojo1.setCategory("category2");
+        quantityPerBrandPojo.put(brandPojo, 1);
+        quantityPerBrandPojo.put(brandPojo1, 2);
+        revenuePerBrandCategory.put(brandPojo, 100.00);
+        revenuePerBrandCategory.put(brandPojo1, 200.00);
         SaleXmlList saleXmlList = DataConversionUtil.convertSalesList(quantityPerBrandPojo, revenuePerBrandCategory);
         assertEquals(2, saleXmlList.getSaleReportDataList().size());
     }

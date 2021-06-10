@@ -17,6 +17,7 @@ import java.util.List;
 @ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
 @WebAppConfiguration("src/test/webapp")
 @Transactional
+//An abstract class for all the test classes
 public abstract class AbstractUnitTest {
 
     @Autowired
@@ -39,12 +40,13 @@ public abstract class AbstractUnitTest {
     protected List<OrderPojo> orderPojoList;
     protected List<OrderItemPojo> orderItemPojoList;
 
+    //Declares all the pojo and assigns values for testing
     protected void declare() throws ApiException {
-        brandPojoList = new ArrayList<BrandPojo>();
-        productPojoList = new ArrayList<ProductPojo>();
-        inventoryPojoList = new ArrayList<InventoryPojo>();
-        orderPojoList = new ArrayList<OrderPojo>();
-        orderItemPojoList = new ArrayList<OrderItemPojo>();
+        brandPojoList = new ArrayList<>();
+        productPojoList = new ArrayList<>();
+        inventoryPojoList = new ArrayList<>();
+        orderPojoList = new ArrayList<>();
+        orderItemPojoList = new ArrayList<>();
 
         for(int i=0; i<2; i++) {
             BrandPojo brand = new BrandPojo();
@@ -77,7 +79,7 @@ public abstract class AbstractUnitTest {
         productService.add(product);
         productPojoList.add(product);
 
-        List<OrderItemPojo> order_item_list = new ArrayList<OrderItemPojo>();
+        List<OrderItemPojo> order_item_list = new ArrayList<>();
         for(int i=0; i<2; i++) {
             OrderItemPojo order_item = new OrderItemPojo();
             order_item.setProductId(productPojoList.get(0).getId());
